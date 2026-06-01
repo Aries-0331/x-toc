@@ -34,13 +34,17 @@ class TOCPanel {
     this.panel.style.cssText = `
       position: fixed;
       z-index: 999999;
-      width: 280px;
+      width: clamp(340px, 34vw, 560px);
+      min-width: 320px;
+      max-width: calc(100vw - 20px);
       max-height: 60vh;
       background: var(--bg-primary, #ffffff);
       border-radius: 12px;
       box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
       display: none;
       flex-direction: column;
+      overflow: hidden;
+      resize: horizontal;
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
     `;
 
@@ -143,6 +147,7 @@ class TOCPanel {
     const body = this.panel.querySelector('.toc-panel-body');
     body.innerHTML = this.renderTOC(toc);
     this.panel.style.display = 'flex';
+    this.keepInViewport();
     this.isVisible = true;
 
     // Add click handlers to TOC items
@@ -175,6 +180,17 @@ class TOCPanel {
     }
     this.isVisible = false;
     chrome.storage.local.set({ tocPanelVisible: false });
+  }
+
+  keepInViewport() {
+    const rect = this.panel.getBoundingClientRect();
+    const maxX = window.innerWidth - rect.width - 10;
+    const maxY = window.innerHeight - rect.height - 10;
+    const nextX = Math.max(10, Math.min(rect.left, maxX));
+    const nextY = Math.max(10, Math.min(rect.top, maxY));
+
+    this.panel.style.left = nextX + 'px';
+    this.panel.style.top = nextY + 'px';
   }
 
   toggle(toc) {
