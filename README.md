@@ -1,8 +1,8 @@
 # X & Twitter Article TOC
 
-A browser extension that adds an interactive table of contents to X.com and Twitter long-form articles. Navigate easily through articles with a floating panel, drag-to-move functionality, and position persistence.
+A browser extension that adds an interactive table of contents and lightweight excerpt capture to X.com and Twitter long-form articles.
 
-[![Version](https://img.shields.io/badge/version-0.2.0-blue)](https://github.com/ariesZ/twitter-toc-extension)
+[![Version](https://img.shields.io/badge/version-0.3.0-blue)](https://github.com/ariesZ/twitter-toc-extension)
 [![License](https://img.shields.io/badge/license-MIT-green)](LICENSE)
 [![Chrome Web Store](https://img.shields.io/chrome-web-store/size/nbdgpckkcfkomnmdefinikjijgljgjfp)](https://chromewebstore.google.com/detail/nbdgpckkcfkomnmdefinikjijgljgjfp?utm_source=item-share-cb)
 
@@ -14,6 +14,9 @@ A browser extension that adds an interactive table of contents to X.com and Twit
 - **Position Persistence** - Remembers your panel position across sessions
 - **Dark Mode Support** - Automatically matches X.com's light/dark theme
 - **Article Title** - Includes article title as the first TOC entry
+- **Excerpt Saving** - Select text in an article and save it with one click
+- **Local Excerpt Library** - Manage saved excerpts from the options page
+- **Markdown / JSON Export** - Export all excerpts or selected excerpts for Obsidian, Notion, Logseq, or other knowledge-base workflows
 
 ## Installation
 
@@ -43,11 +46,36 @@ npm run build
 
 ## Usage
 
+### Table of contents
+
 1. Visit any long-form article on X.com or Twitter.com
 2. Click the extension icon in the toolbar
 3. The table of contents will appear in the popup
 4. Click the pin icon to show a floating panel on the page
 5. Drag the panel to reposition it
+
+### Saving excerpts
+
+1. Open an X/Twitter long-form article
+2. Select text in the article body
+3. Click the floating `save to xtoc` button
+4. Open `Options` from the popup to view saved excerpts
+5. Use checkboxes to select excerpts for export or deletion
+
+## Excerpt Storage
+
+Excerpt data is stored locally in the extension with `chrome.storage.local`.
+
+Storage keys:
+
+- `twitterTocArticles`
+- `twitterTocExcerpts`
+- `twitterTocExcerptSettings`
+
+Exports support:
+
+- Markdown for note-taking apps and personal knowledge bases
+- JSON for future sync or automation workflows
 
 ## Development
 
@@ -71,15 +99,15 @@ src/
 ├── background.js        # Service worker
 ├── logo.png            # Extension icon
 ├── content/
-│   ├── scripts.js     # TOC extraction & floating panel
-│   └── styles.css     # Panel styles
+│   ├── scripts.js     # TOC extraction, floating panel, excerpt saving
+│   └── styles.css     # Panel and excerpt button styles
 ├── popup/
 │   ├── index.html
-│   ├── scripts.js     # Popup UI
+│   ├── scripts.js     # Popup TOC UI and options entry
 │   └── styles.css
 └── options/
     ├── index.html
-    ├── scripts.js     # Options page
+    ├── scripts.js     # Excerpt library, export, deletion
     └── styles.css
 ```
 
