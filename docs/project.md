@@ -8,6 +8,10 @@ X & Twitter Article TOC is a browser extension for reading X/Twitter long-form a
 
 Version: `0.3.0`
 
+## Chrome Store Single Purpose
+
+X & Twitter Article TOC provides focused reading tools for X/Twitter long-form articles: an interactive table of contents for navigation and local excerpt saving/export for capturing useful passages.
+
 ## Core Features
 
 - Detect headings in X/Twitter long-form articles

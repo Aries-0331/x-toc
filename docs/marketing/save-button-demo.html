@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>XTOC Save Button Demo</title>
+  <link rel="stylesheet" href="../../src/content/styles.css">
+  <style>
+    :root {
+      --page-bg: #f6f8fa;
+      --card-bg: #ffffff;
+      --border: #dfe5eb;
+      --text: #0f1419;
+      --muted: #536471;
+      --accent-soft: rgba(29, 155, 240, 0.18);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      background: var(--page-bg);
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    }
+
+    .stage {
+      width: 1120px;
+      margin: 0 auto;
+      padding: 72px 0;
+    }
+
+    .article-shell {
+      position: relative;
+      width: 760px;
+      margin: 0 auto;
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      background: var(--card-bg);
+      box-shadow: 0 18px 48px rgba(15, 20, 25, 0.08);
+      overflow: hidden;
+    }
+
+    .article-header {
+      padding: 28px 32px 18px;
+      border-bottom: 1px solid #edf1f5;
+    }
+
+    .author {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 18px;
+      color: var(--muted);
+      font-size: 14px;
+      font-weight: 650;
+    }
+
+    .avatar {
+      width: 34px;
+      height: 34px;
+      border-radius: 9999px;
+      background: #111827;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: 34px;
+      line-height: 1.14;
+      letter-spacing: 0;
+    }
+
+    .article-body {
+      padding: 26px 32px 34px;
+      font-size: 18px;
+      line-height: 1.68;
+    }
+
+    .article-body p {
+      margin: 0 0 20px;
+    }
+
+    .selection {
+      border-radius: 4px;
+      background: var(--accent-soft);
+      box-shadow: 0 0 0 3px var(--accent-soft);
+    }
+
+    #xtoc-save-excerpt-button {
+      display: block;
+      top: 300px;
+      left: 625px;
+    }
+
+    .caption {
+      width: 760px;
+      margin: 18px auto 0;
+      color: var(--muted);
+      font-size: 13px;
+    }
+  </style>
+</head>
+<body>
+  <main class="stage">
+    <article class="article-shell">
+      <header class="article-header">
+        <div class="author">
+          <span class="avatar"></span>
+          <span>Atlas · @atlas · X Article</span>
+        </div>
+        <h1>Solo founding is at an all-time high</h1>
+      </header>
+      <section class="article-body">
+        <p>
+          This article is useful as a macro view on solo founders,
+          <span class="selection">especially the difference between B2B and B2C outcomes for solo startup builders.</span>
+        </p>
+        <p>
+          XTOC turns selected article text into a local excerpt that can later be reviewed, selected, deleted, and exported as Markdown or JSON.
+        </p>
+      </section>
+    </article>
+
+    <button id="xtoc-save-excerpt-button" type="button">save to xtoc</button>
+    <p class="caption">Demo screenshot using real article metadata and summary text from the supplied source table.</p>
+  </main>
+</body>
+</html>

@@ -4,7 +4,7 @@
   "firefox:manifest_version": 2,
   "version": "0.3.0",
   "name": "X & Twitter Article TOC",
-  "description": "Navigate X/Twitter long-form articles with an interactive table of contents. Jump to any section easily.",
+  "description": "Add a floating table of contents and save useful excerpts while reading X/Twitter long-form articles.",
   "icons": {
     "16": "logo.png",
     "32": "logo.png",
