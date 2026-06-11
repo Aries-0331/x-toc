@@ -158,3 +158,64 @@
 .twitter-toc-panel .toc-panel-body::-webkit-scrollbar-thumb:hover {
   background: var(--text-secondary);
 }
+
+#xtoc-save-excerpt-button {
+  position: fixed;
+  z-index: 1000000;
+  display: none;
+  padding: 8px 12px;
+  border: 1px solid rgba(15, 20, 25, 0.08);
+  border-radius: 9999px;
+  background: #0f1419;
+  color: #ffffff;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.18);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1;
+  cursor: pointer;
+  user-select: none;
+  transition: background-color 0.15s ease, transform 0.15s ease, opacity 0.15s ease;
+}
+
+#xtoc-save-excerpt-button:hover {
+  background: #272c30;
+  transform: translateY(-1px);
+}
+
+#xtoc-save-excerpt-button:disabled {
+  cursor: default;
+  opacity: 0.9;
+  transform: none;
+}
+
+#xtoc-save-excerpt-button.xtoc-saved {
+  background: #00ba7c;
+}
+
+#xtoc-save-excerpt-button.xtoc-duplicate {
+  background: #536471;
+}
+
+@media (prefers-color-scheme: dark) {
+  #xtoc-save-excerpt-button {
+    border-color: rgba(255, 255, 255, 0.12);
+    background: #eff3f4;
+    color: #0f1419;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.38);
+  }
+
+  #xtoc-save-excerpt-button:hover {
+    background: #d7dbdc;
+  }
+
+  #xtoc-save-excerpt-button.xtoc-saved {
+    background: #00ba7c;
+    color: #ffffff;
+  }
+
+  #xtoc-save-excerpt-button.xtoc-duplicate {
+    background: #8b98a5;
+    color: #ffffff;
+  }
+}

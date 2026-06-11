@@ -1,8 +1,8 @@
 {
   "private": true,
   "name": "twitter-toc-extension",
-  "description": "Navigate X.com and Twitter.com long-form articles with an interactive table of contents",
-  "version": "0.2.1",
+  "description": "Add a floating table of contents and save useful excerpts while reading X/Twitter long-form articles.",
+  "version": "0.3.0",
   "license": "MIT",
   "type": "module",
   "author": {

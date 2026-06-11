@@ -3,6 +3,402 @@
 let tocData = [];
 let headerElements = [];
 let tocPanel = null;
+let xtocExcerptFeatureInitialized = false;
+let xtocSaveButton = null;
+let xtocCurrentSelection = null;
+let xtocLastUrl = window.location.href;
+let xtocSelectionTimeout = null;
+let xtocExcerptAbortController = null;
+
+const XTOC_STORAGE_KEYS = {
+  articles: 'twitterTocArticles',
+  excerpts: 'twitterTocExcerpts',
+  settings: 'twitterTocExcerptSettings'
+};
+
+const DEFAULT_EXCERPT_SETTINGS = {
+  contextLength: 80,
+  defaultExportFormat: 'markdown'
+};
+
+function isExtensionElement(element) {
+  return Boolean(
+    element?.closest?.('#twitter-toc-panel') ||
+    element?.closest?.('#xtoc-save-excerpt-button')
+  );
+}
+
+function getCanonicalUrl() {
+  const currentUrl = `${window.location.origin}${window.location.pathname}`;
+  if (getStatusId(currentUrl)) {
+    return currentUrl;
+  }
+
+  const canonicalLink = document.querySelector('link[rel="canonical"]');
+  if (canonicalLink?.href && getStatusId(canonicalLink.href)) {
+    return canonicalLink.href.split('?')[0].split('#')[0];
+  }
+
+  return currentUrl;
+}
+
+function getStatusId(url = getCanonicalUrl()) {
+  const match = url.match(/\/status(?:es)?\/(\d+)/);
+  return match ? match[1] : null;
+}
+
+function hashString(value) {
+  let hash = 0;
+  for (let i = 0; i < value.length; i += 1) {
+    hash = ((hash << 5) - hash) + value.charCodeAt(i);
+    hash |= 0;
+  }
+  return Math.abs(hash).toString(36);
+}
+
+function getArticleId(canonicalUrl) {
+  const statusId = getStatusId(canonicalUrl);
+  return statusId ? `article_${statusId}` : `article_${hashString(canonicalUrl)}`;
+}
+
+function normalizeWhitespace(value) {
+  return value.replace(/\s+/g, ' ').trim();
+}
+
+function getMeaningfulArticleLine(article) {
+  const lines = (article?.textContent || '')
+    .split('\n')
+    .map((line) => normalizeWhitespace(line))
+    .filter((line) => line.length >= 8 && line.length < 180 && !/^\d+$/.test(line));
+
+  return lines[0] || null;
+}
+
+function getArticleTitle(article, canonicalUrl) {
+  const titleElement = document.querySelector('[data-testid="twitter-article-title"]');
+  const titleText = titleElement?.textContent?.trim();
+  if (titleText) return titleText;
+
+  const tocTitle = tocData.find((item) => item.level === 1)?.text || headerElements[0]?.text;
+  if (tocTitle) return tocTitle;
+
+  const heading = article?.querySelector?.('h1, h2, .longform-header-one, .longform-header-two');
+  const headingText = heading?.textContent?.trim();
+  if (headingText) return headingText;
+
+  const firstLine = getMeaningfulArticleLine(article);
+  if (firstLine) return firstLine;
+
+  const statusId = getStatusId(canonicalUrl);
+  if (statusId) return `X / Twitter Article - ${statusId}`;
+
+  return 'X / Twitter Article';
+}
+
+function getArticleAuthor(article) {
+  const userName = article?.querySelector?.('[data-testid="User-Name"]');
+  const userNameText = userName?.textContent || '';
+  const handleMatch = userNameText.match(/@[\w_]+/);
+  const authorHandle = handleMatch ? handleMatch[0] : null;
+
+  let authorName = null;
+  if (userName) {
+    const nameCandidate = Array.from(userName.querySelectorAll('span'))
+      .map((span) => span.textContent?.trim())
+      .find((text) => text && !text.startsWith('@') && !/^\d+[smhd]$/.test(text));
+    authorName = nameCandidate || null;
+  }
+
+  if (!authorHandle) {
+    const statusMatch = getCanonicalUrl().match(/^https?:\/\/(?:x|twitter)\.com\/([^/]+)\/status/);
+    return {
+      authorName,
+      authorHandle: statusMatch ? `@${statusMatch[1]}` : null
+    };
+  }
+
+  return { authorName, authorHandle };
+}
+
+function getPublishedAt(article) {
+  const datetime = article?.querySelector?.('time[datetime]')?.getAttribute('datetime');
+  return datetime || null;
+}
+
+function extractArticleMetadata(article = findArticleContainer()) {
+  const canonicalUrl = getCanonicalUrl();
+  const now = new Date().toISOString();
+  const { authorName, authorHandle } = getArticleAuthor(article);
+
+  return {
+    id: getArticleId(canonicalUrl),
+    url: window.location.href,
+    canonicalUrl,
+    title: getArticleTitle(article, canonicalUrl),
+    authorName,
+    authorHandle,
+    publishedAt: getPublishedAt(article),
+    platform: window.location.hostname,
+    createdAt: now,
+    updatedAt: now
+  };
+}
+
+async function getStorageData() {
+  const data = await chrome.storage.local.get([
+    XTOC_STORAGE_KEYS.articles,
+    XTOC_STORAGE_KEYS.excerpts,
+    XTOC_STORAGE_KEYS.settings
+  ]);
+
+  return {
+    articles: data[XTOC_STORAGE_KEYS.articles] || {},
+    excerpts: data[XTOC_STORAGE_KEYS.excerpts] || {},
+    settings: {
+      ...DEFAULT_EXCERPT_SETTINGS,
+      ...(data[XTOC_STORAGE_KEYS.settings] || {})
+    }
+  };
+}
+
+function isDuplicateExcerpt(excerpts, articleId, text) {
+  return Object.values(excerpts).some((excerpt) => (
+    excerpt.articleId === articleId &&
+    excerpt.text === text
+  ));
+}
+
+function getSelectionContext(article, selectedText, contextLength) {
+  const articleText = article?.textContent || '';
+  const index = articleText.indexOf(selectedText);
+
+  if (index === -1) {
+    return {
+      contextBefore: '',
+      contextAfter: ''
+    };
+  }
+
+  return {
+    contextBefore: articleText.slice(Math.max(0, index - contextLength), index).trim(),
+    contextAfter: articleText.slice(index + selectedText.length, index + selectedText.length + contextLength).trim()
+  };
+}
+
+async function saveExcerptToStorage(selectedText) {
+  const articleElement = xtocCurrentSelection?.articleElement || findArticleContainer();
+  const article = extractArticleMetadata(articleElement);
+  const { articles, excerpts, settings } = await getStorageData();
+
+  if (isDuplicateExcerpt(excerpts, article.id, selectedText)) {
+    return { duplicate: true };
+  }
+
+  const existingArticle = articles[article.id];
+  const nextArticle = {
+    ...article,
+    createdAt: existingArticle?.createdAt || article.createdAt,
+    updatedAt: new Date().toISOString()
+  };
+
+  const excerptId = `excerpt_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`;
+  const context = getSelectionContext(articleElement, selectedText, settings.contextLength);
+  const excerpt = {
+    id: excerptId,
+    articleId: article.id,
+    text: selectedText,
+    contextBefore: context.contextBefore,
+    contextAfter: context.contextAfter,
+    pageUrl: window.location.href,
+    selectionLength: selectedText.length,
+    createdAt: new Date().toISOString(),
+    source: window.location.hostname
+  };
+
+  await chrome.storage.local.set({
+    [XTOC_STORAGE_KEYS.articles]: {
+      ...articles,
+      [article.id]: nextArticle
+    },
+    [XTOC_STORAGE_KEYS.excerpts]: {
+      ...excerpts,
+      [excerpt.id]: excerpt
+    },
+    [XTOC_STORAGE_KEYS.settings]: settings
+  });
+
+  return { duplicate: false, article: nextArticle, excerpt };
+}
+
+function createSaveExcerptButton() {
+  if (xtocSaveButton) return xtocSaveButton;
+
+  xtocSaveButton = document.createElement('button');
+  xtocSaveButton.id = 'xtoc-save-excerpt-button';
+  xtocSaveButton.type = 'button';
+  xtocSaveButton.textContent = 'save to xtoc';
+  xtocSaveButton.style.display = 'none';
+
+  xtocSaveButton.addEventListener('mousedown', (event) => {
+    event.preventDefault();
+  });
+
+  xtocSaveButton.addEventListener('click', async (event) => {
+    event.preventDefault();
+    event.stopPropagation();
+
+    const selectedText = xtocCurrentSelection?.text;
+    if (!selectedText) return;
+
+    xtocSaveButton.disabled = true;
+
+    try {
+      const result = await saveExcerptToStorage(selectedText);
+      xtocSaveButton.classList.toggle('xtoc-duplicate', result.duplicate);
+      xtocSaveButton.classList.toggle('xtoc-saved', !result.duplicate);
+      xtocSaveButton.textContent = result.duplicate ? 'already saved' : 'saved';
+
+      setTimeout(() => {
+        hideSaveExcerptButton();
+        window.getSelection()?.removeAllRanges();
+      }, 900);
+    } catch (error) {
+      console.error('[TOC] Failed to save excerpt:', error);
+      xtocSaveButton.textContent = 'save failed';
+      setTimeout(hideSaveExcerptButton, 1200);
+    }
+  });
+
+  document.body.appendChild(xtocSaveButton);
+  return xtocSaveButton;
+}
+
+function hideSaveExcerptButton() {
+  if (!xtocSaveButton) return;
+
+  xtocSaveButton.style.display = 'none';
+  xtocSaveButton.disabled = false;
+  xtocSaveButton.textContent = 'save to xtoc';
+  xtocSaveButton.classList.remove('xtoc-saved', 'xtoc-duplicate');
+  xtocCurrentSelection = null;
+}
+
+function showSaveExcerptButton(range, text) {
+  const rect = range.getBoundingClientRect();
+  if (!rect || (rect.width === 0 && rect.height === 0)) {
+    hideSaveExcerptButton();
+    return;
+  }
+
+  const button = createSaveExcerptButton();
+  button.style.display = 'block';
+  button.disabled = false;
+  button.textContent = 'save to xtoc';
+  button.classList.remove('xtoc-saved', 'xtoc-duplicate');
+
+  const buttonRect = button.getBoundingClientRect();
+  const gap = 8;
+  const top = rect.top > buttonRect.height + gap
+    ? rect.top - buttonRect.height - gap
+    : rect.bottom + gap;
+  const left = rect.left + (rect.width / 2) - (buttonRect.width / 2);
+
+  button.style.top = `${Math.max(8, Math.min(top, window.innerHeight - buttonRect.height - 8))}px`;
+  button.style.left = `${Math.max(8, Math.min(left, window.innerWidth - buttonRect.width - 8))}px`;
+
+  xtocCurrentSelection = {
+    text,
+    range,
+    articleElement: findArticleContainerForElement(range.commonAncestorContainer)
+  };
+}
+
+function findArticleContainerForElement(element) {
+  const parentElement = element.nodeType === Node.ELEMENT_NODE ? element : element.parentElement;
+  return parentElement?.closest?.('article') ||
+    parentElement?.closest?.('[data-testid="twitterArticleReadView"]') ||
+    findArticleContainer();
+}
+
+function getSelectedArticleRange() {
+  const selection = window.getSelection();
+  if (!selection || selection.rangeCount === 0 || selection.isCollapsed) return null;
+
+  const selectedText = selection.toString().trim();
+  if (selectedText.length < 6) return null;
+
+  const range = selection.getRangeAt(0);
+  const commonAncestor = range.commonAncestorContainer.nodeType === Node.ELEMENT_NODE
+    ? range.commonAncestorContainer
+    : range.commonAncestorContainer.parentElement;
+
+  if (isExtensionElement(commonAncestor)) return null;
+
+  const article = findArticleContainer();
+  const readView = document.querySelector('[data-testid="twitterArticleReadView"]');
+  const isInArticle = article?.contains(commonAncestor);
+  const isInReadView = readView?.contains(commonAncestor);
+  if ((article || readView) && !isInArticle && !isInReadView) return null;
+
+  return { range, text: selectedText };
+}
+
+function updateExcerptSelection() {
+  const selectedRange = getSelectedArticleRange();
+  if (!selectedRange) {
+    hideSaveExcerptButton();
+    return;
+  }
+
+  showSaveExcerptButton(selectedRange.range, selectedRange.text);
+}
+
+function scheduleSelectionUpdate() {
+  clearTimeout(xtocSelectionTimeout);
+  xtocSelectionTimeout = setTimeout(updateExcerptSelection, 60);
+}
+
+function handleExcerptRouteChange() {
+  if (window.location.href === xtocLastUrl) return;
+  xtocLastUrl = window.location.href;
+  hideSaveExcerptButton();
+  window.getSelection()?.removeAllRanges();
+}
+
+function initExcerptFeature() {
+  if (xtocExcerptFeatureInitialized) return;
+  xtocExcerptFeatureInitialized = true;
+  xtocExcerptAbortController = new AbortController();
+  const listenerOptions = { signal: xtocExcerptAbortController.signal };
+
+  createSaveExcerptButton();
+
+  document.addEventListener('mouseup', scheduleSelectionUpdate, listenerOptions);
+  document.addEventListener('selectionchange', scheduleSelectionUpdate, listenerOptions);
+  document.addEventListener('keyup', (event) => {
+    if (event.key === 'Shift' || event.key.startsWith('Arrow')) {
+      scheduleSelectionUpdate();
+    }
+  }, listenerOptions);
+  document.addEventListener('mousedown', (event) => {
+    if (!isExtensionElement(event.target)) {
+      hideSaveExcerptButton();
+    }
+  }, listenerOptions);
+  window.addEventListener('scroll', hideSaveExcerptButton, {
+    ...listenerOptions,
+    capture: true
+  });
+}
+
+function destroyExcerptFeature() {
+  xtocExcerptAbortController?.abort();
+  xtocExcerptAbortController = null;
+  hideSaveExcerptButton();
+  xtocSaveButton?.remove();
+  xtocSaveButton = null;
+  xtocExcerptFeatureInitialized = false;
+}
 
 // TOC Panel Class - manages floating pinnable panel
 class TOCPanel {
@@ -363,6 +759,7 @@ async function init() {
   // Initialize TOC Panel
   tocPanel = new TOCPanel();
   await tocPanel.init();
+  initExcerptFeature();
 
   // Check if panel was visible before
   const storage = await chrome.storage.local.get('tocPanelVisible');
@@ -372,6 +769,7 @@ async function init() {
 
   // Watch for dynamic content (SPA navigation)
   const observer = new MutationObserver((mutations) => {
+    handleExcerptRouteChange();
     clearTimeout(window.tocExtractTimeout);
     window.tocExtractTimeout = setTimeout(() => {
       tocData = extractTOC();
@@ -424,5 +822,6 @@ export default function main() {
     if (tocPanel) {
       tocPanel.destroy();
     }
+    destroyExcerptFeature();
   };
 }

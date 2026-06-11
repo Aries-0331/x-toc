@@ -1,0 +1,286 @@
+{
+  "twitterTocExcerptSettings": {
+    "contextLength": 80,
+    "defaultExportFormat": "markdown"
+  },
+  "twitterTocArticles": {
+    "article_2061149724430741507": {
+      "id": "article_2061149724430741507",
+      "url": "https://x.com/joncphillips/article/2061149724430741507",
+      "canonicalUrl": "https://x.com/joncphillips/article/2061149724430741507",
+      "title": "Manufactured Urgency",
+      "authorName": "Jon C. Phillips",
+      "authorHandle": "@joncphillips",
+      "publishedAt": null,
+      "platform": "x.com",
+      "createdAt": "2026-06-04T01:00:00.000Z",
+      "updatedAt": "2026-06-04T01:00:00.000Z"
+    },
+    "article_2060037753124077595": {
+      "id": "article_2060037753124077595",
+      "url": "https://x.com/atlas/article/2060037753124077595",
+      "canonicalUrl": "https://x.com/atlas/article/2060037753124077595",
+      "title": "Solo founding is at an all-time high",
+      "authorName": "Atlas",
+      "authorHandle": "@atlas",
+      "publishedAt": null,
+      "platform": "x.com",
+      "createdAt": "2026-06-04T01:04:00.000Z",
+      "updatedAt": "2026-06-04T01:04:00.000Z"
+    },
+    "article_2056872413854654625": {
+      "id": "article_2056872413854654625",
+      "url": "https://x.com/mattgittleson/article/2056872413854654625",
+      "canonicalUrl": "https://x.com/mattgittleson/article/2056872413854654625",
+      "title": "I vibecoded a B2C app and exited for $375,000 in 6 months",
+      "authorName": "Matt Gittleson",
+      "authorHandle": "@mattgittleson",
+      "publishedAt": null,
+      "platform": "x.com",
+      "createdAt": "2026-06-04T01:08:00.000Z",
+      "updatedAt": "2026-06-04T01:08:00.000Z"
+    },
+    "article_2059776645121400972": {
+      "id": "article_2059776645121400972",
+      "url": "https://x.com/pierreeliottlal/article/2059776645121400972",
+      "canonicalUrl": "https://x.com/pierreeliottlal/article/2059776645121400972",
+      "title": "What we learned building a SaaS from $0...",
+      "authorName": "Pierre Eliott Lal",
+      "authorHandle": "@pierreeliottlal",
+      "publishedAt": null,
+      "platform": "x.com",
+      "createdAt": "2026-06-04T01:12:00.000Z",
+      "updatedAt": "2026-06-04T01:12:00.000Z"
+    },
+    "article_2056390241217622502": {
+      "id": "article_2056390241217622502",
+      "url": "https://x.com/hnshah/article/2056390241217622502",
+      "canonicalUrl": "https://x.com/hnshah/article/2056390241217622502",
+      "title": "The new startup bottleneck",
+      "authorName": "Hiten Shah",
+      "authorHandle": "@hnshah",
+      "publishedAt": null,
+      "platform": "x.com",
+      "createdAt": "2026-06-04T01:16:00.000Z",
+      "updatedAt": "2026-06-04T01:16:00.000Z"
+    },
+    "article_2055689118248763561": {
+      "id": "article_2055689118248763561",
+      "url": "https://x.com/shreyas/article/2055689118248763561",
+      "canonicalUrl": "https://x.com/shreyas/article/2055689118248763561",
+      "title": "Get to the Core of the Thing",
+      "authorName": "Shreyas Doshi",
+      "authorHandle": "@shreyas",
+      "publishedAt": null,
+      "platform": "x.com",
+      "createdAt": "2026-06-04T01:20:00.000Z",
+      "updatedAt": "2026-06-04T01:20:00.000Z"
+    },
+    "article_2058950286324986294": {
+      "id": "article_2058950286324986294",
+      "url": "https://x.com/cyberfund/article/2058950286324986294",
+      "canonicalUrl": "https://x.com/cyberfund/article/2058950286324986294",
+      "title": "How to Build an AI-Native Startup",
+      "authorName": "cyber•Fund",
+      "authorHandle": "@cyberfund",
+      "publishedAt": null,
+      "platform": "x.com",
+      "createdAt": "2026-06-04T01:24:00.000Z",
+      "updatedAt": "2026-06-04T01:24:00.000Z"
+    },
+    "article_2061378385398673473": {
+      "id": "article_2061378385398673473",
+      "url": "https://x.com/sairahul1/article/2061378385398673473",
+      "canonicalUrl": "https://x.com/sairahul1/article/2061378385398673473",
+      "title": "How to Build a Software Factory With Opus 4.8, GPT 5.5...",
+      "authorName": "Sai Rahul",
+      "authorHandle": "@sairahul1",
+      "publishedAt": null,
+      "platform": "x.com",
+      "createdAt": "2026-06-04T01:28:00.000Z",
+      "updatedAt": "2026-06-04T01:28:00.000Z"
+    },
+    "article_2029680516568600933": {
+      "id": "article_2029680516568600933",
+      "url": "https://x.com/JulienBek/article/2029680516568600933",
+      "canonicalUrl": "https://x.com/JulienBek/article/2029680516568600933",
+      "title": "Services: The New Software",
+      "authorName": "Julien Bek",
+      "authorHandle": "@JulienBek",
+      "publishedAt": null,
+      "platform": "x.com",
+      "createdAt": "2026-06-04T01:32:00.000Z",
+      "updatedAt": "2026-06-04T01:32:00.000Z"
+    },
+    "article_2061460204730937379": {
+      "id": "article_2061460204730937379",
+      "url": "https://x.com/chrija/article/2061460204730937379",
+      "canonicalUrl": "https://x.com/chrija/article/2061460204730937379",
+      "title": "What made Contentful win",
+      "authorName": "Christoph Janz",
+      "authorHandle": "@chrija",
+      "publishedAt": null,
+      "platform": "x.com",
+      "createdAt": "2026-06-04T01:36:00.000Z",
+      "updatedAt": "2026-06-04T01:36:00.000Z"
+    },
+    "article_2047344892108771519": {
+      "id": "article_2047344892108771519",
+      "url": "https://x.com/lishali88/article/2047344892108771519",
+      "canonicalUrl": "https://x.com/lishali88/article/2047344892108771519",
+      "title": "Notes From 8 Years as a Founder in Generative AI",
+      "authorName": "Lisha Li",
+      "authorHandle": "@lishali88",
+      "publishedAt": null,
+      "platform": "x.com",
+      "createdAt": "2026-06-04T01:40:00.000Z",
+      "updatedAt": "2026-06-04T01:40:00.000Z"
+    },
+    "article_2061402866896535776": {
+      "id": "article_2061402866896535776",
+      "url": "https://x.com/SoraiaDev/article/2061402866896535776",
+      "canonicalUrl": "https://x.com/SoraiaDev/article/2061402866896535776",
+      "title": "You're Probably Not Going to Make It (And It's Not Your Fault)",
+      "authorName": "SoraiaDev",
+      "authorHandle": "@SoraiaDev",
+      "publishedAt": null,
+      "platform": "x.com",
+      "createdAt": "2026-06-04T01:44:00.000Z",
+      "updatedAt": "2026-06-04T01:44:00.000Z"
+    }
+  },
+  "twitterTocExcerpts": {
+    "excerpt_mock_001": {
+      "id": "excerpt_mock_001",
+      "articleId": "article_2061149724430741507",
+      "text": "Good critique of indie-hacker anxiety, shipping pressure, MRR screenshots, and why “everyone else is moving faster” can distort your judgment.",
+      "contextBefore": "Source table summary",
+      "contextAfter": "Manufactured Urgency — Jon C. Phillips",
+      "pageUrl": "https://x.com/joncphillips/article/2061149724430741507",
+      "selectionLength": 139,
+      "createdAt": "2026-06-04T02:00:00.000Z",
+      "source": "x.com"
+    },
+    "excerpt_mock_002": {
+      "id": "excerpt_mock_002",
+      "articleId": "article_2060037753124077595",
+      "text": "Useful macro view on solo founders, especially the difference between B2B and B2C outcomes for solo startup builders.",
+      "contextBefore": "Source table summary",
+      "contextAfter": "Solo founding is at an all-time high — Atlas",
+      "pageUrl": "https://x.com/atlas/article/2060037753124077595",
+      "selectionLength": 112,
+      "createdAt": "2026-06-04T02:04:00.000Z",
+      "source": "x.com"
+    },
+    "excerpt_mock_003": {
+      "id": "excerpt_mock_003",
+      "articleId": "article_2056872413854654625",
+      "text": "A very relevant case study for AI-assisted building, consumer apps, speed, distribution, and exit potential.",
+      "contextBefore": "Source table summary",
+      "contextAfter": "I vibecoded a B2C app and exited for $375,000 in 6 months — Matt Gittleson",
+      "pageUrl": "https://x.com/mattgittleson/article/2056872413854654625",
+      "selectionLength": 103,
+      "createdAt": "2026-06-04T02:08:00.000Z",
+      "source": "x.com"
+    },
+    "excerpt_mock_004": {
+      "id": "excerpt_mock_004",
+      "articleId": "article_2059776645121400972",
+      "text": "Practical founder lessons around early SaaS, product selection, caring about the problem, and reaching early MRR.",
+      "contextBefore": "Source table summary",
+      "contextAfter": "What we learned building a SaaS from $0… — Pierre Eliott Lal",
+      "pageUrl": "https://x.com/pierreeliottlal/article/2059776645121400972",
+      "selectionLength": 108,
+      "createdAt": "2026-06-04T02:12:00.000Z",
+      "source": "x.com"
+    },
+    "excerpt_mock_005": {
+      "id": "excerpt_mock_005",
+      "articleId": "article_2056390241217622502",
+      "text": "Strong business/product read: argues that AI makes shipping easier, so founder taste, positioning, and craft become bigger bottlenecks.",
+      "contextBefore": "Source table summary",
+      "contextAfter": "The new startup bottleneck — Hiten Shah",
+      "pageUrl": "https://x.com/hnshah/article/2056390241217622502",
+      "selectionLength": 134,
+      "createdAt": "2026-06-04T02:16:00.000Z",
+      "source": "x.com"
+    },
+    "excerpt_mock_006": {
+      "id": "excerpt_mock_006",
+      "articleId": "article_2055689118248763561",
+      "text": "Good for product thinking: how founders decide whether to go wide or deep, especially in AI startups.",
+      "contextBefore": "Source table summary",
+      "contextAfter": "Get to the Core of the Thing — Shreyas Doshi",
+      "pageUrl": "https://x.com/shreyas/article/2055689118248763561",
+      "selectionLength": 96,
+      "createdAt": "2026-06-04T02:20:00.000Z",
+      "source": "x.com"
+    },
+    "excerpt_mock_007": {
+      "id": "excerpt_mock_007",
+      "articleId": "article_2058950286324986294",
+      "text": "More strategic and operational: treats context, memory, and agents as part of the company architecture.",
+      "contextBefore": "Source table summary",
+      "contextAfter": "How to Build an AI-Native Startup — cyber•Fund",
+      "pageUrl": "https://x.com/cyberfund/article/2058950286324986294",
+      "selectionLength": 99,
+      "createdAt": "2026-06-04T02:24:00.000Z",
+      "source": "x.com"
+    },
+    "excerpt_mock_008": {
+      "id": "excerpt_mock_008",
+      "articleId": "article_2061378385398673473",
+      "text": "Very relevant if you care about AI coding workflows, indie hackers acting like small product teams, and multi-model development systems.",
+      "contextBefore": "Source table summary",
+      "contextAfter": "How to Build a Software Factory With Opus 4.8, GPT 5.5… — Sai Rahul",
+      "pageUrl": "https://x.com/sairahul1/article/2061378385398673473",
+      "selectionLength": 130,
+      "createdAt": "2026-06-04T02:28:00.000Z",
+      "source": "x.com"
+    },
+    "excerpt_mock_009": {
+      "id": "excerpt_mock_009",
+      "articleId": "article_2029680516568600933",
+      "text": "Useful business thesis: AI startups may increasingly look like software-enabled service companies rather than classic SaaS.",
+      "contextBefore": "Source table summary",
+      "contextAfter": "Services: The New Software — Julien Bek",
+      "pageUrl": "https://x.com/JulienBek/article/2029680516568600933",
+      "selectionLength": 115,
+      "createdAt": "2026-06-04T02:32:00.000Z",
+      "source": "x.com"
+    },
+    "excerpt_mock_010": {
+      "id": "excerpt_mock_010",
+      "articleId": "article_2061460204730937379",
+      "text": "Good startup-history/business read: early Contentful lessons around positioning, technical founders, and why some SaaS companies break out.",
+      "contextBefore": "Source table summary",
+      "contextAfter": "What made Contentful win — Christoph Janz",
+      "pageUrl": "https://x.com/chrija/article/2061460204730937379",
+      "selectionLength": 134,
+      "createdAt": "2026-06-04T02:36:00.000Z",
+      "source": "x.com"
+    },
+    "excerpt_mock_011": {
+      "id": "excerpt_mock_011",
+      "articleId": "article_2047344892108771519",
+      "text": "Valuable long-view founder reflection on building in generative AI before and during the current boom.",
+      "contextBefore": "Source table summary",
+      "contextAfter": "Notes From 8 Years as a Founder in Generative AI — Lisha Li",
+      "pageUrl": "https://x.com/lishali88/article/2047344892108771519",
+      "selectionLength": 98,
+      "createdAt": "2026-06-04T02:40:00.000Z",
+      "source": "x.com"
+    },
+    "excerpt_mock_012": {
+      "id": "excerpt_mock_012",
+      "articleId": "article_2061402866896535776",
+      "text": "A counterweight to hustle-porn indie hacking content; useful for staying realistic about survivorship bias.",
+      "contextBefore": "Source table summary",
+      "contextAfter": "You’re Probably Not Going to Make It (And It’s Not Your Fault) — SoraiaDev",
+      "pageUrl": "https://x.com/SoraiaDev/article/2061402866896535776",
+      "selectionLength": 102,
+      "createdAt": "2026-06-04T02:44:00.000Z",
+      "source": "x.com"
+    }
+  }
+}

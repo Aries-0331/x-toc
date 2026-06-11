@@ -1,55 +1,400 @@
 // Options page script
 
-// Default settings
-const defaultSettings = {
-  autoDetect: true,
-  showInPopup: true,
-  highlightCurrent: true,
-  smoothScroll: true
+const excerptStorageKeys = {
+  articles: 'twitterTocArticles',
+  excerpts: 'twitterTocExcerpts',
+  settings: 'twitterTocExcerptSettings'
 };
 
-// Load settings
-async function loadSettings() {
-  const settings = await chrome.storage.sync.get(defaultSettings);
+let excerptState = {
+  articles: {},
+  excerpts: {}
+};
 
-  document.getElementById('autoDetect').checked = settings.autoDetect;
-  document.getElementById('showInPopup').checked = settings.showInPopup;
-  document.getElementById('highlightCurrent').checked = settings.highlightCurrent;
-  document.getElementById('smoothScroll').checked = settings.smoothScroll;
-}
+let selectedExcerptIds = new Set();
 
-// Save settings
-async function saveSettings() {
-  const settings = {
-    autoDetect: document.getElementById('autoDetect').checked,
-    showInPopup: document.getElementById('showInPopup').checked,
-    highlightCurrent: document.getElementById('highlightCurrent').checked,
-    smoothScroll: document.getElementById('smoothScroll').checked
+async function loadExcerptData() {
+  const data = await chrome.storage.local.get([
+    excerptStorageKeys.articles,
+    excerptStorageKeys.excerpts
+  ]);
+
+  excerptState = {
+    articles: data[excerptStorageKeys.articles] || {},
+    excerpts: data[excerptStorageKeys.excerpts] || {}
   };
 
-  await chrome.storage.sync.set(settings);
-
-  // Show saved indicator
-  const saveBtn = document.getElementById('saveBtn');
-  const originalText = saveBtn.textContent;
-  saveBtn.textContent = 'Saved!';
-  saveBtn.classList.add('saved');
-
-  setTimeout(() => {
-    saveBtn.textContent = originalText;
-    saveBtn.classList.remove('saved');
-  }, 1500);
+  renderExcerptManager();
 }
 
-// Handle upgrade button (placeholder for Paddle integration)
-function handleUpgrade() {
-  alert('Paddle payment integration coming soon...');
+function groupExcerptsByArticle() {
+  const groups = new Map();
+
+  Object.values(excerptState.excerpts)
+    .sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt))
+    .forEach((excerpt) => {
+      const article = excerptState.articles[excerpt.articleId] || {
+        id: excerpt.articleId,
+        title: 'Unknown Article',
+        url: excerpt.pageUrl || '',
+        canonicalUrl: excerpt.pageUrl || '',
+        authorName: null,
+        authorHandle: null,
+        publishedAt: null,
+        platform: excerpt.source || 'x.com'
+      };
+
+      if (!groups.has(article.id)) {
+        groups.set(article.id, {
+          article,
+          excerpts: []
+        });
+      }
+
+      groups.get(article.id).excerpts.push(excerpt);
+    });
+
+  return Array.from(groups.values())
+    .sort((a, b) => {
+      const latestA = a.excerpts[a.excerpts.length - 1]?.createdAt || '';
+      const latestB = b.excerpts[b.excerpts.length - 1]?.createdAt || '';
+      return new Date(latestB) - new Date(latestA);
+    });
+}
+
+function escapeHtml(value) {
+  return String(value || '')
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+
+function formatDisplayDate(value) {
+  if (!value) return 'Unknown';
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return value;
+  return date.toLocaleString();
+}
+
+function formatAuthor(article) {
+  if (article.authorName && article.authorHandle) {
+    return `${article.authorName} (${article.authorHandle})`;
+  }
+  return article.authorName || article.authorHandle || 'Unknown';
+}
+
+function getSelectedExcerptCount() {
+  selectedExcerptIds = new Set(
+    Array.from(selectedExcerptIds).filter((excerptId) => excerptState.excerpts[excerptId])
+  );
+  return selectedExcerptIds.size;
+}
+
+function renderExcerptManager() {
+  const manager = document.getElementById('excerptManager');
+  const exportMenuBtn = document.getElementById('exportMenuBtn');
+  const exportMarkdownMenuItem = document.getElementById('exportMarkdownMenuItem');
+  const exportJsonMenuItem = document.getElementById('exportJsonMenuItem');
+  const deleteSelectedBtn = document.getElementById('deleteSelectedBtn');
+  const clearSelectionBtn = document.getElementById('clearSelectionBtn');
+  const selectionSummary = document.getElementById('selectionSummary');
+  const articleCount = document.getElementById('articleCount');
+  const excerptCount = document.getElementById('excerptCount');
+  const groups = groupExcerptsByArticle();
+  const hasExcerpts = groups.length > 0;
+  const totalExcerpts = groups.reduce((count, group) => count + group.excerpts.length, 0);
+  const selectedCount = getSelectedExcerptCount();
+  const hasSelection = selectedCount > 0;
+
+  exportMenuBtn.disabled = !hasExcerpts;
+  exportMenuBtn.textContent = hasSelection ? 'Export selected' : 'Export';
+  exportMarkdownMenuItem.textContent = hasSelection ? 'Markdown' : 'All excerpts as Markdown';
+  exportJsonMenuItem.textContent = hasSelection ? 'JSON' : 'All excerpts as JSON';
+  selectionSummary.textContent = `${selectedCount} selected`;
+  clearSelectionBtn.classList.toggle('hidden', !hasSelection);
+  deleteSelectedBtn.classList.toggle('hidden', !hasSelection);
+  articleCount.textContent = groups.length;
+  excerptCount.textContent = totalExcerpts;
+
+  if (!hasExcerpts) {
+    manager.innerHTML = `
+      <div class="empty-state">
+        <strong>No excerpts saved yet</strong>
+        <span>Select text in an X/Twitter article and click "save to xtoc".</span>
+      </div>
+    `;
+    return;
+  }
+
+  manager.innerHTML = groups.map(({ article, excerpts }) => `
+    <article class="article-excerpt-group" data-article-id="${escapeHtml(article.id)}">
+      <div class="article-group-header">
+        <div class="article-title-block">
+          <div class="article-title-row">
+            <h3>
+              <a class="article-title-link" href="${escapeHtml(article.url || article.canonicalUrl || '#')}" target="_blank" rel="noreferrer">
+                <span>${escapeHtml(article.title || 'Unknown Article')}</span>
+                <span class="external-link-mark" aria-hidden="true">↗</span>
+              </a>
+            </h3>
+            <div class="article-meta-row">
+              <span>${escapeHtml(formatAuthor(article))}</span>
+              <span>${excerpts.length} excerpt${excerpts.length === 1 ? '' : 's'}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <ul class="excerpt-list">
+        ${excerpts.map((excerpt) => `
+          <li class="excerpt-item">
+            <label class="excerpt-select" title="Select excerpt">
+              <input type="checkbox" data-action="select-excerpt" data-excerpt-id="${escapeHtml(excerpt.id)}" ${selectedExcerptIds.has(excerpt.id) ? 'checked' : ''}>
+            </label>
+            <div class="excerpt-content">
+              <blockquote>${escapeHtml(excerpt.text)}</blockquote>
+              <div class="excerpt-footer">
+                <span>Saved ${escapeHtml(formatDisplayDate(excerpt.createdAt))}</span>
+              </div>
+            </div>
+          </li>
+        `).join('')}
+      </ul>
+    </article>
+  `).join('');
+}
+
+async function saveExcerptState() {
+  await chrome.storage.local.set({
+    [excerptStorageKeys.articles]: excerptState.articles,
+    [excerptStorageKeys.excerpts]: excerptState.excerpts
+  });
+}
+
+async function deleteSelectedExcerpts() {
+  const articleIds = new Set();
+
+  selectedExcerptIds.forEach((excerptId) => {
+    const articleId = excerptState.excerpts[excerptId]?.articleId;
+    if (articleId) articleIds.add(articleId);
+    delete excerptState.excerpts[excerptId];
+  });
+
+  articleIds.forEach((articleId) => {
+    if (!Object.values(excerptState.excerpts).some((excerpt) => excerpt.articleId === articleId)) {
+      delete excerptState.articles[articleId];
+    }
+  });
+
+  selectedExcerptIds = new Set();
+  await saveExcerptState();
+  renderExcerptManager();
+}
+
+function yamlString(value) {
+  return String(value || '')
+    .replace(/\r?\n/g, ' ')
+    .replace(/"/g, '\\"');
+}
+
+function blockquote(value) {
+  const text = String(value || '');
+  if (!text) return '> ';
+  return text.split(/\r?\n/).map((line) => `> ${line}`).join('\n');
+}
+
+function markdownValue(value) {
+  return value || 'Unknown';
+}
+
+function contextForMarkdown(excerpt) {
+  const before = excerpt.contextBefore ? `...${excerpt.contextBefore}` : '...';
+  const after = excerpt.contextAfter ? `${excerpt.contextAfter}...` : '...';
+  return `${before} **[excerpt]** ${after}`;
+}
+
+function renderAllMarkdown(groups, exportedAt) {
+  const excerptCount = groups.reduce((count, group) => count + group.excerpts.length, 0);
+
+  return `---
+title: "X / Twitter Excerpts Export"
+source: "twitter-toc-extension"
+exported_at: "${yamlString(exportedAt)}"
+article_count: ${groups.length}
+excerpt_count: ${excerptCount}
+---
+
+# X / Twitter Excerpts Export
+
+Exported at: ${exportedAt}
+
+${groups.map(({ article, excerpts }) => {
+  const url = article.canonicalUrl || article.url || '';
+  return `## ${article.title || 'Unknown Article'}
+
+- Source: [X / Twitter](${url || '#'})
+- Author: ${markdownValue(formatAuthor(article))}
+- Published at: ${markdownValue(article.publishedAt)}
+- Excerpt count: ${excerpts.length}
+
+${excerpts.map((excerpt, index) => `### Excerpt ${index + 1}
+
+${blockquote(excerpt.text)}
+
+Context:
+
+${blockquote(contextForMarkdown(excerpt))}
+
+Saved at: ${markdownValue(excerpt.createdAt)}
+`).join('\n---\n\n')}`;
+}).join('\n\n')}`.trim();
+}
+
+function renderAllJson(groups, exportedAt) {
+  return JSON.stringify({
+    version: 1,
+    source: 'twitter-toc-extension',
+    exportedAt,
+    articles: groups.map(({ article, excerpts }) => ({
+      id: article.id,
+      url: article.url || '',
+      canonicalUrl: article.canonicalUrl || '',
+      title: article.title || '',
+      authorName: article.authorName || null,
+      authorHandle: article.authorHandle || null,
+      publishedAt: article.publishedAt || null,
+      platform: article.platform || '',
+      createdAt: article.createdAt || null,
+      updatedAt: article.updatedAt || null,
+      excerpts: excerpts.map((excerpt) => ({
+        id: excerpt.id,
+        text: excerpt.text,
+        contextBefore: excerpt.contextBefore || '',
+        contextAfter: excerpt.contextAfter || '',
+        pageUrl: excerpt.pageUrl || '',
+        selectionLength: excerpt.selectionLength || excerpt.text.length,
+        createdAt: excerpt.createdAt,
+        source: excerpt.source || ''
+      }))
+    }))
+  }, null, 2);
+}
+
+function currentDateSlug() {
+  return new Date().toISOString().slice(0, 10);
+}
+
+function downloadFile(filename, content, type) {
+  const blob = new Blob([content], { type });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement('a');
+  link.href = url;
+  link.download = filename;
+  document.body.appendChild(link);
+  link.click();
+  link.remove();
+  URL.revokeObjectURL(url);
+}
+
+function getExportGroups() {
+  const groups = groupExcerptsByArticle();
+  if (selectedExcerptIds.size === 0) return groups;
+
+  return groups
+    .map(({ article, excerpts }) => ({
+      article,
+      excerpts: excerpts.filter((excerpt) => selectedExcerptIds.has(excerpt.id))
+    }))
+    .filter((group) => group.excerpts.length > 0);
+}
+
+function exportMarkdown() {
+  const groups = getExportGroups();
+  if (groups.length === 0) return;
+
+  const markdown = renderAllMarkdown(groups, new Date().toISOString());
+  const filenamePrefix = selectedExcerptIds.size > 0 ? 'x-twitter-selected-excerpts' : 'x-twitter-excerpts';
+  downloadFile(`${filenamePrefix}-${currentDateSlug()}.md`, markdown, 'text/markdown;charset=utf-8');
+}
+
+function exportJson() {
+  const groups = getExportGroups();
+  if (groups.length === 0) return;
+
+  const json = renderAllJson(groups, new Date().toISOString());
+  const filenamePrefix = selectedExcerptIds.size > 0 ? 'x-twitter-selected-excerpts' : 'x-twitter-excerpts';
+  downloadFile(`${filenamePrefix}-${currentDateSlug()}.json`, json, 'application/json;charset=utf-8');
+}
+
+function bindExcerptManagerEvents() {
+  document.getElementById('excerptManager').addEventListener('change', (event) => {
+    if (event.target.dataset.action !== 'select-excerpt') return;
+
+    if (event.target.checked) {
+      selectedExcerptIds.add(event.target.dataset.excerptId);
+    } else {
+      selectedExcerptIds.delete(event.target.dataset.excerptId);
+    }
+    renderExcerptManager();
+  });
+}
+
+function closeExportMenu() {
+  document.getElementById('exportMenuBtn').setAttribute('aria-expanded', 'false');
+  document.getElementById('exportDropdown').classList.remove('open');
+}
+
+function bindExportMenu() {
+  const exportMenuBtn = document.getElementById('exportMenuBtn');
+  const exportDropdown = document.getElementById('exportDropdown');
+
+  exportMenuBtn.addEventListener('click', (event) => {
+    event.stopPropagation();
+    const isOpen = exportDropdown.classList.toggle('open');
+    exportMenuBtn.setAttribute('aria-expanded', String(isOpen));
+  });
+
+  document.getElementById('exportMenu').addEventListener('click', (event) => {
+    const action = event.target.dataset.action;
+    if (action === 'export-markdown') {
+      exportMarkdown();
+    } else if (action === 'export-json') {
+      exportJson();
+    }
+    closeExportMenu();
+  });
+
+  document.addEventListener('click', closeExportMenu);
+}
+
+function bindSelectionActions() {
+  document.getElementById('deleteSelectedBtn').addEventListener('click', async () => {
+    const selectedCount = getSelectedExcerptCount();
+    if (selectedCount > 0 && confirm(`Delete ${selectedCount} selected excerpt${selectedCount === 1 ? '' : 's'}?`)) {
+      await deleteSelectedExcerpts();
+    }
+  });
+
+  document.getElementById('clearSelectionBtn').addEventListener('click', () => {
+    selectedExcerptIds = new Set();
+    renderExcerptManager();
+  });
+
+  document.addEventListener('click', (event) => {
+    if (selectedExcerptIds.size === 0) return;
+    if (event.target.closest('.excerpt-item') || event.target.closest('.excerpt-actions')) return;
+
+    selectedExcerptIds = new Set();
+    renderExcerptManager();
+  });
 }
 
 // Initialize
 document.addEventListener('DOMContentLoaded', () => {
-  loadSettings();
-
-  document.getElementById('saveBtn').addEventListener('click', saveSettings);
-  document.getElementById('upgradeBtn').addEventListener('click', handleUpgrade);
+  bindExcerptManagerEvents();
+  bindExportMenu();
+  bindSelectionActions();
+  loadExcerptData();
 });
