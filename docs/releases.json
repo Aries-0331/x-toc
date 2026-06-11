@@ -1,0 +1,40 @@
+{
+  "schema_version": 1,
+  "repository": "Aries-0331/twitter-toc-extension",
+  "source_branch": "main",
+  "releases": [
+    {
+      "version": "0.2.1",
+      "tag_name": "0.2.1",
+      "name": "XTOC 0.2.1",
+      "date": "2026-06-01",
+      "target_commitish": "8eb493de91384057224fc0e88c50a87dd54d3c10",
+      "draft": false,
+      "prerelease": false,
+      "latest": true,
+      "body": "## Highlights\n\n- Expanded TOC title display so long article titles are easier to read.\n- Refined popup title styling to keep titles visible without crowding the UI.\n- Bumped extension package and manifest versions from `0.2.0` to `0.2.1`.\n\nRelease date: 2026-06-01\nCommit: 8eb493de91384057224fc0e88c50a87dd54d3c10"
+    },
+    {
+      "version": "0.2.0",
+      "tag_name": "0.2.0",
+      "name": "XTOC 0.2.0",
+      "date": "2026-02-27",
+      "target_commitish": "c72e64e60f0c20bb61645e1baaddd144bd24b0f4",
+      "draft": false,
+      "prerelease": false,
+      "latest": false,
+      "body": "## Highlights\n\n- Fixed heading extraction for updated X/Twitter article markup.\n- Fixed TOC extraction in fullscreen article views.\n- Added versioned build archive output to `.gitignore`.\n- Bumped extension package and manifest versions from `0.1.0` to `0.2.0`.\n\nRelease date: 2026-02-27\nCommit: c72e64e60f0c20bb61645e1baaddd144bd24b0f4"
+    },
+    {
+      "version": "0.1.0",
+      "tag_name": "0.1.0",
+      "name": "XTOC 0.1.0",
+      "date": "2026-02-25",
+      "target_commitish": "bb4cc4fe385721f8b1f5d0da2f1b4ddc6006ca7c",
+      "draft": false,
+      "prerelease": false,
+      "latest": false,
+      "body": "## Highlights\n\n- Added the pinnable floating TOC panel for X/Twitter long-form articles.\n- Added drag-to-move behavior and persisted panel position.\n- Added popup controls, options entry point, and production build zip script.\n- Replaced the starter extension metadata with XTOC package, manifest, and README content.\n\nRelease date: 2026-02-25\nCommit: bb4cc4fe385721f8b1f5d0da2f1b4ddc6006ca7c"
+    }
+  ]
+}
