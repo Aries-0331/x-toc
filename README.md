@@ -2,7 +2,7 @@
 
 A browser extension that adds an interactive table of contents and lightweight excerpt capture to X.com and Twitter long-form articles.
 
-[![Version](https://img.shields.io/badge/version-0.3.0-blue)](https://github.com/Aries-0331/twitter-toc-extension/releases)
+[![Version](https://img.shields.io/badge/version-0.3.0-blue)](https://github.com/Aries-0331/x-toc/releases)
 [![License](https://img.shields.io/badge/license-MIT-green)](LICENSE)
 [![Chrome Web Store](https://img.shields.io/chrome-web-store/size/nbdgpckkcfkomnmdefinikjijgljgjfp)](https://chromewebstore.google.com/detail/nbdgpckkcfkomnmdefinikjijgljgjfp?utm_source=item-share-cb)
 
@@ -24,8 +24,8 @@ A browser extension that adds an interactive table of contents and lightweight e
 
 ```bash
 # Clone the repository
-git clone https://github.com/Aries-0331/twitter-toc-extension.git
-cd twitter-toc-extension
+git clone https://github.com/Aries-0331/x-toc.git
+cd x-toc
 
 # Install dependencies
 npm install
