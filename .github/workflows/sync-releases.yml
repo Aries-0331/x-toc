@@ -1,0 +1,105 @@
+name: Sync release records
+
+on:
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: "Print planned release changes without writing to GitHub"
+        type: boolean
+        default: true
+
+permissions:
+  contents: write
+
+jobs:
+  sync:
+    name: Sync GitHub Releases
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Validate release records
+        run: |
+          set -euo pipefail
+          jq -e '
+            .schema_version == 1
+            and (.releases | type == "array")
+            and (.releases | length > 0)
+            and all(.releases[];
+              .version
+              and .tag_name == ("v" + .version)
+              and .name == ("v" + .version)
+              and .date
+              and .target_commitish
+              and .body
+            )
+          ' docs/releases.json >/dev/null
+
+      - name: Sync releases
+        env:
+          GH_TOKEN: ${{ github.token }}
+          DRY_RUN: ${{ inputs.dry_run }}
+        run: |
+          set -euo pipefail
+
+          jq -c '.releases[]' docs/releases.json | while IFS= read -r release; do
+            version="$(jq -r '.version' <<<"$release")"
+            tag="$(jq -r '.tag_name' <<<"$release")"
+            name="$(jq -r '.name' <<<"$release")"
+            target="$(jq -r '.target_commitish' <<<"$release")"
+            prerelease="$(jq -r '.prerelease // false' <<<"$release")"
+            draft="$(jq -r '.draft // false' <<<"$release")"
+            latest="$(jq -r '.latest // false' <<<"$release")"
+            body_file="$(mktemp)"
+
+            git cat-file -e "${target}^{commit}"
+            jq -r '.body' <<<"$release" >"$body_file"
+
+            if [[ "$DRY_RUN" == "true" ]]; then
+              echo "Would sync release ${version} (${tag}) at ${target}"
+              cat "$body_file"
+              rm -f "$body_file"
+              continue
+            fi
+
+            if gh release view "$tag" >/dev/null 2>&1; then
+              args=(release edit "$tag" --target "$target" --title "$name" --notes-file "$body_file")
+
+              if [[ "$prerelease" == "true" ]]; then
+                args+=(--prerelease)
+              fi
+
+              if [[ "$draft" == "true" ]]; then
+                args+=(--draft)
+              fi
+
+              if [[ "$latest" == "true" ]]; then
+                args+=(--latest)
+              fi
+
+              gh "${args[@]}"
+            else
+              args=(release create "$tag" --target "$target" --title "$name" --notes-file "$body_file")
+
+              if [[ "$prerelease" == "true" ]]; then
+                args+=(--prerelease)
+              fi
+
+              if [[ "$draft" == "true" ]]; then
+                args+=(--draft)
+              fi
+
+              if [[ "$latest" == "true" ]]; then
+                args+=(--latest)
+              else
+                args+=(--latest=false)
+              fi
+
+              gh "${args[@]}"
+            fi
+
+            rm -f "$body_file"
+          done

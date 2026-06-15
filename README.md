@@ -2,7 +2,7 @@
 
 A browser extension that adds an interactive table of contents and lightweight excerpt capture to X.com and Twitter long-form articles.
 
-[![Version](https://img.shields.io/badge/version-0.3.0-blue)](https://github.com/ariesZ/twitter-toc-extension)
+[![Version](https://img.shields.io/badge/version-0.3.0-blue)](https://github.com/Aries-0331/twitter-toc-extension/releases)
 [![License](https://img.shields.io/badge/license-MIT-green)](LICENSE)
 [![Chrome Web Store](https://img.shields.io/chrome-web-store/size/nbdgpckkcfkomnmdefinikjijgljgjfp)](https://chromewebstore.google.com/detail/nbdgpckkcfkomnmdefinikjijgljgjfp?utm_source=item-share-cb)
 
@@ -90,6 +90,12 @@ npm run build
 npm run build:firefox
 npm run build:edge
 ```
+
+## Releases
+
+Release history is tracked in [CHANGELOG.md](CHANGELOG.md) and
+[docs/releases.json](docs/releases.json). Release package names and GitHub
+Release titles use the `v0.3.0` format without an XTOC/project-name prefix.
 
 ## Project Structure
 
