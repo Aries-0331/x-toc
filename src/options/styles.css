@@ -136,6 +136,40 @@ body {
   justify-content: flex-end;
 }
 
+.excerpt-search-row {
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--soft-border);
+  background: var(--bg-primary);
+}
+
+.excerpt-search {
+  display: grid;
+  gap: 6px;
+}
+
+.excerpt-search span {
+  color: var(--text-secondary);
+  font-size: 12px;
+  font-weight: 750;
+}
+
+.excerpt-search input {
+  width: 100%;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  background: var(--bg-elevated);
+  color: var(--text-primary);
+  font: inherit;
+  font-size: 14px;
+  outline: none;
+  padding: 10px 12px;
+}
+
+.excerpt-search input:focus {
+  border-color: var(--accent-color);
+  box-shadow: 0 0 0 3px rgba(29, 155, 240, 0.14);
+}
+
 .selection-summary {
   display: inline-flex;
   align-items: center;

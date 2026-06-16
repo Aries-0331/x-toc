@@ -2,6 +2,7 @@ import assert from 'node:assert/strict';
 import test from 'node:test';
 
 import {
+  filterExcerptGroups,
   normalizeClipNote,
   normalizeClipTags,
   updateClipNote,
@@ -71,4 +72,83 @@ test('updateClipNote removes an empty note without dropping other fields', () =>
   assert.equal(Object.hasOwn(updated, 'note'), false);
   assert.deepEqual(updated.tags, ['product']);
   assert.equal(updated.updatedAt, '2026-06-16T04:00:00.000Z');
+});
+
+const searchGroups = [
+  {
+    article: {
+      id: 'article_1',
+      title: 'Product lessons from small tools',
+      authorName: 'Alice',
+      authorHandle: '@alice'
+    },
+    excerpts: [
+      {
+        ...baseClip,
+        id: 'excerpt_1',
+        text: 'Small tools stay close to the workflow.',
+        tags: ['product'],
+        note: 'Positioning quote'
+      },
+      {
+        ...baseClip,
+        id: 'excerpt_2',
+        text: 'Implementation details matter.',
+        tags: ['engineering']
+      }
+    ]
+  },
+  {
+    article: {
+      id: 'article_2',
+      title: 'Research notes',
+      authorName: 'Bob',
+      authorHandle: '@bob'
+    },
+    excerpts: [
+      {
+        ...baseClip,
+        id: 'excerpt_3',
+        articleId: 'article_2',
+        text: 'Context helps readers connect ideas.',
+        tags: ['research']
+      }
+    ]
+  }
+];
+
+test('filterExcerptGroups returns all groups for an empty query', () => {
+  assert.equal(filterExcerptGroups(searchGroups, '').length, 2);
+  assert.equal(filterExcerptGroups(searchGroups, '   ').length, 2);
+});
+
+test('filterExcerptGroups searches clip text', () => {
+  const result = filterExcerptGroups(searchGroups, 'workflow');
+  assert.equal(result.length, 1);
+  assert.deepEqual(result[0].excerpts.map((excerpt) => excerpt.id), ['excerpt_1']);
+});
+
+test('filterExcerptGroups searches article title', () => {
+  const result = filterExcerptGroups(searchGroups, 'research notes');
+  assert.equal(result.length, 1);
+  assert.deepEqual(result[0].excerpts.map((excerpt) => excerpt.id), ['excerpt_3']);
+});
+
+test('filterExcerptGroups searches author, tags, and notes', () => {
+  assert.deepEqual(
+    filterExcerptGroups(searchGroups, '@alice')[0].excerpts.map((excerpt) => excerpt.id),
+    ['excerpt_1', 'excerpt_2']
+  );
+  assert.deepEqual(
+    filterExcerptGroups(searchGroups, 'engineering')[0].excerpts.map((excerpt) => excerpt.id),
+    ['excerpt_2']
+  );
+  assert.deepEqual(
+    filterExcerptGroups(searchGroups, 'positioning quote')[0].excerpts.map((excerpt) => excerpt.id),
+    ['excerpt_1']
+  );
+});
+
+test('filterExcerptGroups removes groups without matching excerpts', () => {
+  assert.deepEqual(filterExcerptGroups(searchGroups, 'missing'), []);
 });

@@ -39,6 +39,12 @@
             <button class="btn-compact danger hidden" id="deleteSelectedBtn" type="button">Delete selected</button>
           </div>
         </div>
+        <div class="excerpt-search-row">
+          <label class="excerpt-search" for="excerptSearchInput">
+            <span>Search excerpts</span>
+            <input id="excerptSearchInput" type="search" autocomplete="off" placeholder="Search text, title, author, tags, or notes">
+          </label>
+        </div>
 
         <div id="excerptManager" class="excerpt-manager">
           <p class="empty-state">No saved excerpts yet.</p>
@@ -47,6 +53,6 @@
     </main>
   </div>
 
-  <script src="scripts.js"></script>
+  <script type="module" src="scripts.js"></script>
 </body>
 </html>

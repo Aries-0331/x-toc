@@ -1,3 +1,5 @@
+import { filterExcerptGroups } from './clip-utils.js';
+
 // Options page script
 
 const excerptStorageKeys = {
@@ -12,6 +14,7 @@ let excerptState = {
 };
 
 let selectedExcerptIds = new Set();
+let excerptSearchQuery = '';
 
 async function loadExcerptData() {
   const data = await chrome.storage.local.get([
@@ -102,13 +105,16 @@ function renderExcerptManager() {
   const selectionSummary = document.getElementById('selectionSummary');
   const articleCount = document.getElementById('articleCount');
   const excerptCount = document.getElementById('excerptCount');
-  const groups = groupExcerptsByArticle();
+  const allGroups = groupExcerptsByArticle();
+  const groups = filterExcerptGroups(allGroups, excerptSearchQuery);
   const hasExcerpts = groups.length > 0;
+  const hasSavedExcerpts = allGroups.length > 0;
+  const hasSearchQuery = excerptSearchQuery.trim().length > 0;
   const totalExcerpts = groups.reduce((count, group) => count + group.excerpts.length, 0);
   const selectedCount = getSelectedExcerptCount();
   const hasSelection = selectedCount > 0;
 
-  exportMenuBtn.disabled = !hasExcerpts;
+  exportMenuBtn.disabled = !hasSavedExcerpts;
   exportMenuBtn.textContent = hasSelection ? 'Export selected' : 'Export';
   exportMarkdownMenuItem.textContent = hasSelection ? 'Markdown' : 'All excerpts as Markdown';
   exportJsonMenuItem.textContent = hasSelection ? 'JSON' : 'All excerpts as JSON';
@@ -118,11 +124,21 @@ function renderExcerptManager() {
   articleCount.textContent = groups.length;
   excerptCount.textContent = totalExcerpts;
 
-  if (!hasExcerpts) {
+  if (!hasSavedExcerpts) {
     manager.innerHTML = `
       <div class="empty-state">
         <strong>No excerpts saved yet</strong>
         <span>Select text in an X/Twitter article and click "save to xtoc".</span>
+      </div>
+    `;
+    return;
+  }
+
+  if (hasSearchQuery && !hasExcerpts) {
+    manager.innerHTML = `
+      <div class="empty-state">
+        <strong>No matching excerpts</strong>
+        <span>Try a different search term.</span>
       </div>
     `;
     return;
@@ -391,8 +407,19 @@ function bindSelectionActions() {
   });
 }
 
+function bindExcerptSearch() {
+  const searchInput = document.getElementById('excerptSearchInput');
+  if (!searchInput) return;
+
+  searchInput.addEventListener('input', (event) => {
+    excerptSearchQuery = event.target.value;
+    renderExcerptManager();
+  });
+}
+
 // Initialize
 document.addEventListener('DOMContentLoaded', () => {
+  bindExcerptSearch();
   bindExcerptManagerEvents();
   bindExportMenu();
   bindSelectionActions();
