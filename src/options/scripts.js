@@ -1,7 +1,8 @@
 import {
   addClipTag,
   filterExcerptGroups,
-  removeClipTag
+  removeClipTag,
+  updateClipNote
 } from './clip-utils.js';
 
 // Options page script
@@ -188,6 +189,13 @@ function renderExcerptManager() {
                   <input type="text" data-role="tag-input" aria-label="Add tag" placeholder="Add tag">
                   <button type="button" data-action="add-tag" data-excerpt-id="${escapeHtml(excerpt.id)}">Add</button>
                 </div>
+              </div>
+              <div class="excerpt-note">
+                <label>
+                  <span>Note</span>
+                  <textarea data-role="note-input" rows="2" placeholder="Add a note">${escapeHtml(excerpt.note || '')}</textarea>
+                </label>
+                <button type="button" data-action="save-note" data-excerpt-id="${escapeHtml(excerpt.id)}">Save note</button>
               </div>
               <div class="excerpt-footer">
                 <span>Saved ${escapeHtml(formatDisplayDate(excerpt.createdAt))}</span>
@@ -398,6 +406,10 @@ function bindExcerptManagerEvents() {
       await updateExcerpt(actionTarget.dataset.excerptId, (excerpt) => addClipTag(excerpt, tag));
     } else if (action === 'remove-tag') {
       await updateExcerpt(actionTarget.dataset.excerptId, (excerpt) => removeClipTag(excerpt, actionTarget.dataset.tag));
+    } else if (action === 'save-note') {
+      const item = actionTarget.closest('.excerpt-item');
+      const input = item?.querySelector('[data-role="note-input"]');
+      await updateExcerpt(actionTarget.dataset.excerptId, (excerpt) => updateClipNote(excerpt, input?.value || ''));
     }
   });
 

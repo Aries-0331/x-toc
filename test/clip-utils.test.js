@@ -96,6 +96,18 @@ test('updateClipNote sets a note and preserves tags', () => {
   assert.equal(updated.updatedAt, '2026-06-16T03:00:00.000Z');
 });
 
+test('updateClipNote preserves core clip metadata while updating a note', () => {
+  const updated = updateClipNote(baseClip, '  Follow up later.  ', {
+    now: '2026-06-16T03:30:00.000Z'
+  });
+
+  assert.equal(updated.note, 'Follow up later.');
+  assert.equal(updated.id, baseClip.id);
+  assert.equal(updated.articleId, baseClip.articleId);
+  assert.equal(updated.createdAt, baseClip.createdAt);
+  assert.equal(updated.updatedAt, '2026-06-16T03:30:00.000Z');
+});
+
 test('updateClipNote removes an empty note without dropping other fields', () => {
   const updated = updateClipNote(
     { ...baseClip, note: 'old note', tags: ['product'] },

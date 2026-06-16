@@ -363,6 +363,60 @@ body {
   color: var(--accent-color);
 }
 
+.excerpt-note {
+  display: grid;
+  gap: 8px;
+  margin-top: 12px;
+  max-width: 560px;
+}
+
+.excerpt-note label {
+  display: grid;
+  gap: 6px;
+}
+
+.excerpt-note span {
+  color: var(--text-secondary);
+  font-size: 12px;
+  font-weight: 750;
+}
+
+.excerpt-note textarea {
+  width: 100%;
+  resize: vertical;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  background: var(--bg-elevated);
+  color: var(--text-primary);
+  font: inherit;
+  font-size: 13px;
+  min-height: 64px;
+  outline: none;
+  padding: 9px 10px;
+}
+
+.excerpt-note textarea:focus {
+  border-color: var(--accent-color);
+  box-shadow: 0 0 0 3px rgba(29, 155, 240, 0.12);
+}
+
+.excerpt-note button {
+  justify-self: start;
+  border: 1px solid var(--border-color);
+  border-radius: 7px;
+  background: var(--bg-elevated);
+  color: var(--text-primary);
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 750;
+  padding: 7px 10px;
+}
+
+.excerpt-note button:hover {
+  border-color: var(--accent-color);
+  color: var(--accent-color);
+}
+
 .empty-state strong {
   color: var(--text-primary);
   font-size: 15px;
