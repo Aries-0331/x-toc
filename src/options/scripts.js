@@ -4,6 +4,10 @@ import {
   removeClipTag,
   updateClipNote
 } from './clip-utils.js';
+import {
+  renderAllJson,
+  renderAllMarkdown
+} from './export-utils.js';
 
 // Options page script
 
@@ -245,95 +249,6 @@ async function updateExcerpt(excerptId, updater) {
   excerptState.excerpts[excerptId] = nextExcerpt;
   await saveExcerptState();
   renderExcerptManager();
-}
-
-function yamlString(value) {
-  return String(value || '')
-    .replace(/\r?\n/g, ' ')
-    .replace(/"/g, '\\"');
-}
-
-function blockquote(value) {
-  const text = String(value || '');
-  if (!text) return '> ';
-  return text.split(/\r?\n/).map((line) => `> ${line}`).join('\n');
-}
-
-function markdownValue(value) {
-  return value || 'Unknown';
-}
-
-function contextForMarkdown(excerpt) {
-  const before = excerpt.contextBefore ? `...${excerpt.contextBefore}` : '...';
-  const after = excerpt.contextAfter ? `${excerpt.contextAfter}...` : '...';
-  return `${before} **[excerpt]** ${after}`;
-}
-
-function renderAllMarkdown(groups, exportedAt) {
-  const excerptCount = groups.reduce((count, group) => count + group.excerpts.length, 0);
-
-  return `---
-title: "X / Twitter Excerpts Export"
-source: "twitter-toc-extension"
-exported_at: "${yamlString(exportedAt)}"
-article_count: ${groups.length}
-excerpt_count: ${excerptCount}
----
-
-# X / Twitter Excerpts Export
-
-Exported at: ${exportedAt}
-
-${groups.map(({ article, excerpts }) => {
-  const url = article.canonicalUrl || article.url || '';
-  return `## ${article.title || 'Unknown Article'}
-
-- Source: [X / Twitter](${url || '#'})
-- Author: ${markdownValue(formatAuthor(article))}
-- Published at: ${markdownValue(article.publishedAt)}
-- Excerpt count: ${excerpts.length}
-
-${excerpts.map((excerpt, index) => `### Excerpt ${index + 1}
-
-${blockquote(excerpt.text)}
-
-Context:
-
-${blockquote(contextForMarkdown(excerpt))}
-
-Saved at: ${markdownValue(excerpt.createdAt)}
-`).join('\n---\n\n')}`;
-}).join('\n\n')}`.trim();
-}
-
-function renderAllJson(groups, exportedAt) {
-  return JSON.stringify({
-    version: 1,
-    source: 'twitter-toc-extension',
-    exportedAt,
-    articles: groups.map(({ article, excerpts }) => ({
-      id: article.id,
-      url: article.url || '',
-      canonicalUrl: article.canonicalUrl || '',
-      title: article.title || '',
-      authorName: article.authorName || null,
-      authorHandle: article.authorHandle || null,
-      publishedAt: article.publishedAt || null,
-      platform: article.platform || '',
-      createdAt: article.createdAt || null,
-      updatedAt: article.updatedAt || null,
-      excerpts: excerpts.map((excerpt) => ({
-        id: excerpt.id,
-        text: excerpt.text,
-        contextBefore: excerpt.contextBefore || '',
-        contextAfter: excerpt.contextAfter || '',
-        pageUrl: excerpt.pageUrl || '',
-        selectionLength: excerpt.selectionLength || excerpt.text.length,
-        createdAt: excerpt.createdAt,
-        source: excerpt.source || ''
-      }))
-    }))
-  }, null, 2);
 }
 
 function currentDateSlug() {

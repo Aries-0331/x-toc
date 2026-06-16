@@ -13,7 +13,7 @@
 </p>
 
 <p align="center">
-  <a href="https://github.com/Aries-0331/x-toc/releases"><img src="https://img.shields.io/badge/version-0.4.3-blue" alt="Version 0.4.3"></a>
+  <a href="https://github.com/Aries-0331/x-toc/releases"><img src="https://img.shields.io/badge/version-0.4.4-blue" alt="Version 0.4.4"></a>
   <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-green" alt="MIT License"></a>
   <a href="https://chromewebstore.google.com/detail/nbdgpckkcfkomnmdefinikjijgljgjfp?utm_source=item-share-cb"><img src="https://img.shields.io/chrome-web-store/size/nbdgpckkcfkomnmdefinikjijgljgjfp" alt="Chrome Web Store"></a>
 </p>
