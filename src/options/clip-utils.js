@@ -99,3 +99,21 @@ export function filterExcerptGroups(groups, query) {
     }))
     .filter((group) => group.excerpts.length > 0);
 }
+
+export function getClipLibraryEmptyState({ hasSavedClips, hasSearchQuery }) {
+  if (!hasSavedClips) {
+    return {
+      title: 'No clips saved yet',
+      message: 'Select text in an X/Twitter article and click "save to xtoc".'
+    };
+  }
+
+  if (hasSearchQuery) {
+    return {
+      title: 'No matching clips',
+      message: 'Try a different search term.'
+    };
+  }
+
+  return null;
+}

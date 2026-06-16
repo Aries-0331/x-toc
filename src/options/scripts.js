@@ -1,6 +1,7 @@
 import {
   addClipTag,
   filterExcerptGroups,
+  getClipLibraryEmptyState,
   removeClipTag,
   updateClipNote
 } from './clip-utils.js';
@@ -119,35 +120,29 @@ function renderExcerptManager() {
   const hasExcerpts = groups.length > 0;
   const hasSavedExcerpts = allGroups.length > 0;
   const hasSearchQuery = excerptSearchQuery.trim().length > 0;
+  const emptyState = getClipLibraryEmptyState({
+    hasSavedClips: hasSavedExcerpts,
+    hasSearchQuery
+  });
   const totalExcerpts = groups.reduce((count, group) => count + group.excerpts.length, 0);
   const selectedCount = getSelectedExcerptCount();
   const hasSelection = selectedCount > 0;
 
   exportMenuBtn.disabled = !hasSavedExcerpts;
   exportMenuBtn.textContent = hasSelection ? 'Export selected' : 'Export';
-  exportMarkdownMenuItem.textContent = hasSelection ? 'Markdown' : 'All excerpts as Markdown';
-  exportJsonMenuItem.textContent = hasSelection ? 'JSON' : 'All excerpts as JSON';
+  exportMarkdownMenuItem.textContent = hasSelection ? 'Markdown' : 'All clips as Markdown';
+  exportJsonMenuItem.textContent = hasSelection ? 'JSON' : 'All clips as JSON';
   selectionSummary.textContent = `${selectedCount} selected`;
   clearSelectionBtn.classList.toggle('hidden', !hasSelection);
   deleteSelectedBtn.classList.toggle('hidden', !hasSelection);
   articleCount.textContent = groups.length;
   excerptCount.textContent = totalExcerpts;
 
-  if (!hasSavedExcerpts) {
+  if (emptyState) {
     manager.innerHTML = `
       <div class="empty-state">
-        <strong>No excerpts saved yet</strong>
-        <span>Select text in an X/Twitter article and click "save to xtoc".</span>
-      </div>
-    `;
-    return;
-  }
-
-  if (hasSearchQuery && !hasExcerpts) {
-    manager.innerHTML = `
-      <div class="empty-state">
-        <strong>No matching excerpts</strong>
-        <span>Try a different search term.</span>
+        <strong>${escapeHtml(emptyState.title)}</strong>
+        <span>${escapeHtml(emptyState.message)}</span>
       </div>
     `;
     return;
@@ -166,7 +161,7 @@ function renderExcerptManager() {
             </h3>
             <div class="article-meta-row">
               <span>${escapeHtml(formatAuthor(article))}</span>
-              <span>${excerpts.length} excerpt${excerpts.length === 1 ? '' : 's'}</span>
+              <span>${excerpts.length} clip${excerpts.length === 1 ? '' : 's'}</span>
             </div>
           </div>
         </div>
@@ -175,7 +170,7 @@ function renderExcerptManager() {
       <ul class="excerpt-list">
         ${excerpts.map((excerpt) => `
           <li class="excerpt-item" data-excerpt-id="${escapeHtml(excerpt.id)}">
-            <label class="excerpt-select" title="Select excerpt">
+            <label class="excerpt-select" title="Select clip">
               <input type="checkbox" data-action="select-excerpt" data-excerpt-id="${escapeHtml(excerpt.id)}" ${selectedExcerptIds.has(excerpt.id) ? 'checked' : ''}>
             </label>
             <div class="excerpt-content">
@@ -284,7 +279,7 @@ function exportMarkdown() {
   if (groups.length === 0) return;
 
   const markdown = renderAllMarkdown(groups, new Date().toISOString());
-  const filenamePrefix = selectedExcerptIds.size > 0 ? 'x-twitter-selected-excerpts' : 'x-twitter-excerpts';
+  const filenamePrefix = selectedExcerptIds.size > 0 ? 'x-twitter-selected-clips' : 'x-twitter-clips';
   downloadFile(`${filenamePrefix}-${currentDateSlug()}.md`, markdown, 'text/markdown;charset=utf-8');
 }
 
@@ -293,7 +288,7 @@ function exportJson() {
   if (groups.length === 0) return;
 
   const json = renderAllJson(groups, new Date().toISOString());
-  const filenamePrefix = selectedExcerptIds.size > 0 ? 'x-twitter-selected-excerpts' : 'x-twitter-excerpts';
+  const filenamePrefix = selectedExcerptIds.size > 0 ? 'x-twitter-selected-clips' : 'x-twitter-clips';
   downloadFile(`${filenamePrefix}-${currentDateSlug()}.json`, json, 'application/json;charset=utf-8');
 }
 
@@ -369,7 +364,7 @@ function bindExportMenu() {
 function bindSelectionActions() {
   document.getElementById('deleteSelectedBtn').addEventListener('click', async () => {
     const selectedCount = getSelectedExcerptCount();
-    if (selectedCount > 0 && confirm(`Delete ${selectedCount} selected excerpt${selectedCount === 1 ? '' : 's'}?`)) {
+    if (selectedCount > 0 && confirm(`Delete ${selectedCount} selected clip${selectedCount === 1 ? '' : 's'}?`)) {
       await deleteSelectedExcerpts();
     }
   });

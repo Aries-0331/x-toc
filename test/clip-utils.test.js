@@ -4,6 +4,7 @@ import test from 'node:test';
 import {
   addClipTag,
   filterExcerptGroups,
+  getClipLibraryEmptyState,
   normalizeClipNote,
   normalizeClipTags,
   removeClipTag,
@@ -197,4 +198,24 @@ test('filterExcerptGroups searches author, tags, and notes', () => {
 
 test('filterExcerptGroups removes groups without matching excerpts', () => {
   assert.deepEqual(filterExcerptGroups(searchGroups, 'missing'), []);
+});
+
+test('getClipLibraryEmptyState returns no clips copy', () => {
+  assert.deepEqual(
+    getClipLibraryEmptyState({ hasSavedClips: false, hasSearchQuery: false }),
+    {
+      title: 'No clips saved yet',
+      message: 'Select text in an X/Twitter article and click "save to xtoc".'
+    }
+  );
+});
+
+test('getClipLibraryEmptyState returns search no-result copy', () => {
+  assert.deepEqual(
+    getClipLibraryEmptyState({ hasSavedClips: true, hasSearchQuery: true }),
+    {
+      title: 'No matching clips',
+      message: 'Try a different search term.'
+    }
+  );
 });

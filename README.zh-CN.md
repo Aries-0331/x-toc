@@ -13,7 +13,7 @@
 </p>
 
 <p align="center">
-  <a href="https://github.com/Aries-0331/x-toc/releases"><img src="https://img.shields.io/badge/version-0.4.4-blue" alt="Version 0.4.4"></a>
+  <a href="https://github.com/Aries-0331/x-toc/releases"><img src="https://img.shields.io/badge/version-0.4.5-blue" alt="Version 0.4.5"></a>
   <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-green" alt="MIT License"></a>
   <a href="https://chromewebstore.google.com/detail/nbdgpckkcfkomnmdefinikjijgljgjfp?utm_source=item-share-cb"><img src="https://img.shields.io/chrome-web-store/size/nbdgpckkcfkomnmdefinikjijgljgjfp" alt="Chrome Web Store"></a>
 </p>
@@ -27,9 +27,9 @@ X-TOC 是一个面向 X.com 和 Twitter.com 长文的浏览器扩展。它提供
 - 在阅读页固定浮动目录。
 - 支持拖动浮动目录并记住位置。
 - 选中文章文本后点击 `save to xtoc` 保存摘录。
-- 在 Options 页面查看已保存摘录。
-- 将全部或选中的摘录导出为 Markdown 或 JSON。
-- 使用 `chrome.storage.local` 在本地保存摘录数据。
+- 在 Options 页面查看已保存 clips。
+- 将全部或选中的 clips 导出为 Markdown 或 JSON。
+- 使用 `chrome.storage.local` 在本地保存 clip 数据。
 
 ## 从源码安装
 
@@ -58,7 +58,7 @@ npm run build:edge
 
 ## 隐私
 
-已保存摘录存储在浏览器扩展的本地 storage 中。X-TOC 不会把摘录发送到外部服务器。
+已保存 clips 存储在浏览器扩展的本地 storage 中。X-TOC 不会把 clips 发送到外部服务器。
 
 ## 贡献
 

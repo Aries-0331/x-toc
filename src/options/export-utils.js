@@ -24,7 +24,7 @@ function formatAuthor(article) {
 function contextForMarkdown(excerpt) {
   const before = excerpt.contextBefore ? `...${excerpt.contextBefore}` : '...';
   const after = excerpt.contextAfter ? `${excerpt.contextAfter}...` : '...';
-  return `${before} **[excerpt]** ${after}`;
+  return `${before} **[clip]** ${after}`;
 }
 
 function tagsForMarkdown(excerpt) {
@@ -40,14 +40,14 @@ export function renderAllMarkdown(groups, exportedAt) {
   const excerptCount = groups.reduce((count, group) => count + group.excerpts.length, 0);
 
   return `---
-title: "X / Twitter Excerpts Export"
+title: "X / Twitter Clips Export"
 source: "twitter-toc-extension"
 exported_at: "${yamlString(exportedAt)}"
 article_count: ${groups.length}
 excerpt_count: ${excerptCount}
 ---
 
-# X / Twitter Excerpts Export
+# X / Twitter Clips Export
 
 Exported at: ${exportedAt}
 
@@ -58,9 +58,9 @@ ${groups.map(({ article, excerpts }) => {
 - Source: [X / Twitter](${url || '#'})
 - Author: ${markdownValue(formatAuthor(article))}
 - Published at: ${markdownValue(article.publishedAt)}
-- Excerpt count: ${excerpts.length}
+- Clip count: ${excerpts.length}
 
-${excerpts.map((excerpt, index) => `### Excerpt ${index + 1}
+${excerpts.map((excerpt, index) => `### Clip ${index + 1}
 
 ${blockquote(excerpt.text)}
 
