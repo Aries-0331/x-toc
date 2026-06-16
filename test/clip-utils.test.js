@@ -2,9 +2,11 @@ import assert from 'node:assert/strict';
 import test from 'node:test';
 
 import {
+  addClipTag,
   filterExcerptGroups,
   normalizeClipNote,
   normalizeClipTags,
+  removeClipTag,
   updateClipNote,
   updateClipTags
 } from '../src/options/clip-utils.js';
@@ -48,6 +50,38 @@ test('updateClipTags adds normalized tags and preserves existing clip fields', (
   assert.equal(updated.id, baseClip.id);
   assert.equal(updated.text, baseClip.text);
   assert.equal(updated.createdAt, baseClip.createdAt);
+});
+
+test('addClipTag appends one normalized tag and deduplicates values', () => {
+  const updated = addClipTag(
+    { ...baseClip, tags: ['product'] },
+    ' Product ',
+    { now: '2026-06-16T02:30:00.000Z' }
+  );
+
+  assert.deepEqual(updated.tags, ['product']);
+  assert.equal(updated.updatedAt, '2026-06-16T02:30:00.000Z');
+});
+
+test('addClipTag ignores blank tags', () => {
+  const clip = { ...baseClip, tags: ['product'] };
+  const updated = addClipTag(clip, '   ', {
+    now: '2026-06-16T02:35:00.000Z'
+  });
+
+  assert.equal(updated, clip);
+});
+
+test('removeClipTag removes one tag without dropping other clip fields', () => {
+  const updated = removeClipTag(
+    { ...baseClip, tags: ['product', 'Quote'] },
+    ' quote ',
+    { now: '2026-06-16T02:45:00.000Z' }
+  );
+
+  assert.deepEqual(updated.tags, ['product']);
+  assert.equal(updated.text, baseClip.text);
+  assert.equal(updated.updatedAt, '2026-06-16T02:45:00.000Z');
 });
 
 test('updateClipNote sets a note and preserves tags', () => {

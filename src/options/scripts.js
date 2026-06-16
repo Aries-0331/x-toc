@@ -1,4 +1,8 @@
-import { filterExcerptGroups } from './clip-utils.js';
+import {
+  addClipTag,
+  filterExcerptGroups,
+  removeClipTag
+} from './clip-utils.js';
 
 // Options page script
 
@@ -165,12 +169,26 @@ function renderExcerptManager() {
 
       <ul class="excerpt-list">
         ${excerpts.map((excerpt) => `
-          <li class="excerpt-item">
+          <li class="excerpt-item" data-excerpt-id="${escapeHtml(excerpt.id)}">
             <label class="excerpt-select" title="Select excerpt">
               <input type="checkbox" data-action="select-excerpt" data-excerpt-id="${escapeHtml(excerpt.id)}" ${selectedExcerptIds.has(excerpt.id) ? 'checked' : ''}>
             </label>
             <div class="excerpt-content">
               <blockquote>${escapeHtml(excerpt.text)}</blockquote>
+              <div class="excerpt-tags" aria-label="Clip tags">
+                <div class="tag-list">
+                  ${(excerpt.tags || []).map((tag) => `
+                    <button class="tag-chip" type="button" data-action="remove-tag" data-excerpt-id="${escapeHtml(excerpt.id)}" data-tag="${escapeHtml(tag)}" title="Remove tag">
+                      <span>${escapeHtml(tag)}</span>
+                      <span aria-hidden="true">×</span>
+                    </button>
+                  `).join('')}
+                </div>
+                <div class="tag-editor">
+                  <input type="text" data-role="tag-input" aria-label="Add tag" placeholder="Add tag">
+                  <button type="button" data-action="add-tag" data-excerpt-id="${escapeHtml(excerpt.id)}">Add</button>
+                </div>
+              </div>
               <div class="excerpt-footer">
                 <span>Saved ${escapeHtml(formatDisplayDate(excerpt.createdAt))}</span>
               </div>
@@ -205,6 +223,18 @@ async function deleteSelectedExcerpts() {
   });
 
   selectedExcerptIds = new Set();
+  await saveExcerptState();
+  renderExcerptManager();
+}
+
+async function updateExcerpt(excerptId, updater) {
+  const excerpt = excerptState.excerpts[excerptId];
+  if (!excerpt) return;
+
+  const nextExcerpt = updater(excerpt);
+  if (nextExcerpt === excerpt) return;
+
+  excerptState.excerpts[excerptId] = nextExcerpt;
   await saveExcerptState();
   renderExcerptManager();
 }
@@ -345,7 +375,9 @@ function exportJson() {
 }
 
 function bindExcerptManagerEvents() {
-  document.getElementById('excerptManager').addEventListener('change', (event) => {
+  const manager = document.getElementById('excerptManager');
+
+  manager.addEventListener('change', (event) => {
     if (event.target.dataset.action !== 'select-excerpt') return;
 
     if (event.target.checked) {
@@ -354,6 +386,28 @@ function bindExcerptManagerEvents() {
       selectedExcerptIds.delete(event.target.dataset.excerptId);
     }
     renderExcerptManager();
+  });
+
+  manager.addEventListener('click', async (event) => {
+    const actionTarget = event.target.closest('[data-action]');
+    const action = actionTarget?.dataset.action;
+    if (action === 'add-tag') {
+      const item = actionTarget.closest('.excerpt-item');
+      const input = item?.querySelector('[data-role="tag-input"]');
+      const tag = input?.value || '';
+      await updateExcerpt(actionTarget.dataset.excerptId, (excerpt) => addClipTag(excerpt, tag));
+    } else if (action === 'remove-tag') {
+      await updateExcerpt(actionTarget.dataset.excerptId, (excerpt) => removeClipTag(excerpt, actionTarget.dataset.tag));
+    }
+  });
+
+  manager.addEventListener('keydown', async (event) => {
+    if (event.key !== 'Enter' || event.target.dataset.role !== 'tag-input') return;
+
+    event.preventDefault();
+    const item = event.target.closest('.excerpt-item');
+    const addButton = item?.querySelector('[data-action="add-tag"]');
+    await updateExcerpt(addButton?.dataset.excerptId, (excerpt) => addClipTag(excerpt, event.target.value));
   });
 }
 

@@ -292,6 +292,77 @@ body {
   text-align: center;
 }
 
+.excerpt-tags {
+  display: grid;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.tag-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.tag-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  border: 1px solid var(--soft-border);
+  border-radius: 9999px;
+  background: var(--bg-secondary);
+  color: var(--text-secondary);
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 700;
+  padding: 4px 7px;
+}
+
+.tag-chip:hover {
+  border-color: var(--danger-color);
+  color: var(--danger-color);
+}
+
+.tag-editor {
+  display: flex;
+  gap: 6px;
+  max-width: 320px;
+}
+
+.tag-editor input {
+  min-width: 0;
+  flex: 1;
+  border: 1px solid var(--border-color);
+  border-radius: 7px;
+  background: var(--bg-elevated);
+  color: var(--text-primary);
+  font: inherit;
+  font-size: 12px;
+  outline: none;
+  padding: 7px 9px;
+}
+
+.tag-editor input:focus {
+  border-color: var(--accent-color);
+  box-shadow: 0 0 0 3px rgba(29, 155, 240, 0.12);
+}
+
+.tag-editor button {
+  border: 1px solid var(--border-color);
+  border-radius: 7px;
+  background: var(--bg-elevated);
+  color: var(--text-primary);
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 750;
+  padding: 7px 10px;
+}
+
+.tag-editor button:hover {
+  border-color: var(--accent-color);
+  color: var(--accent-color);
+}
+
 .empty-state strong {
   color: var(--text-primary);
   font-size: 15px;
