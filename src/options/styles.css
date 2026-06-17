@@ -332,9 +332,7 @@ body {
 }
 
 .tag-editor {
-  display: flex;
-  gap: 6px;
-  max-width: 320px;
+  max-width: 360px;
 }
 
 .tag-editor input {
@@ -353,22 +351,6 @@ body {
 .tag-editor input:focus {
   border-color: var(--accent-color);
   box-shadow: 0 0 0 3px rgba(29, 155, 240, 0.12);
-}
-
-.tag-editor button {
-  border: 1px solid var(--border-color);
-  border-radius: 7px;
-  background: var(--bg-elevated);
-  color: var(--text-primary);
-  cursor: pointer;
-  font-size: 12px;
-  font-weight: 750;
-  padding: 7px 10px;
-}
-
-.tag-editor button:hover {
-  border-color: var(--accent-color);
-  color: var(--accent-color);
 }
 
 .excerpt-editor {
@@ -417,13 +399,6 @@ body {
   box-shadow: 0 0 0 3px rgba(29, 155, 240, 0.12);
 }
 
-.editor-actions {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-}
-
-.excerpt-note button,
 .edit-clip-btn {
   justify-self: start;
   border: 1px solid var(--border-color);
@@ -436,7 +411,6 @@ body {
   padding: 7px 10px;
 }
 
-.excerpt-note button:hover,
 .edit-clip-btn:hover {
   border-color: var(--accent-color);
   color: var(--accent-color);
@@ -630,6 +604,18 @@ body {
   flex: 0 0 auto;
   padding: 5px 9px;
   font-size: 12px;
+}
+
+.excerpt-item.is-editing .edit-clip-btn {
+  border-color: var(--accent-color);
+  background: var(--accent-color);
+  color: #ffffff;
+}
+
+.excerpt-item.is-editing .edit-clip-btn:hover {
+  border-color: var(--accent-hover);
+  background: var(--accent-hover);
+  color: #ffffff;
 }
 
 @media (max-width: 900px) {

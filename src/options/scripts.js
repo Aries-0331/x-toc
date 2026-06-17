@@ -136,7 +136,6 @@ function renderClipEditor(excerpt) {
         ${renderTagChips(excerpt, { editable: true })}
         <div class="tag-editor">
           <input type="text" data-role="tag-input" aria-label="Add tag" placeholder="Add tag">
-          <button type="button" data-action="add-tag" data-excerpt-id="${escapeHtml(excerpt.id)}">Add</button>
         </div>
       </div>
       <div class="excerpt-note">
@@ -144,11 +143,6 @@ function renderClipEditor(excerpt) {
           <span>Note</span>
           <textarea data-role="note-input" rows="2" placeholder="Add a note">${escapeHtml(excerpt.note || '')}</textarea>
         </label>
-        <div class="editor-actions">
-          <button type="button" data-action="save-note" data-excerpt-id="${escapeHtml(excerpt.id)}">Save note</button>
-          <button type="button" data-action="close-editor" data-excerpt-id="${escapeHtml(excerpt.id)}">Done</button>
-          <button type="button" data-action="cancel-editor" data-excerpt-id="${escapeHtml(excerpt.id)}">Cancel</button>
-        </div>
       </div>
     </div>
   `;
@@ -241,8 +235,8 @@ function renderExcerptManager() {
               ${editingExcerptIds.has(excerpt.id) ? renderClipEditor(excerpt) : renderClipMeta(excerpt)}
               <div class="excerpt-footer">
                 <span>Saved ${escapeHtml(formatDisplayDate(excerpt.createdAt))}</span>
-                <button class="edit-clip-btn" type="button" data-action="${editingExcerptIds.has(excerpt.id) ? 'close-editor' : 'open-editor'}" data-excerpt-id="${escapeHtml(excerpt.id)}">
-                  ${editingExcerptIds.has(excerpt.id) ? 'Done' : 'Edit'}
+                <button class="edit-clip-btn" type="button" data-action="${editingExcerptIds.has(excerpt.id) ? 'save-editor' : 'open-editor'}" data-excerpt-id="${escapeHtml(excerpt.id)}">
+                  ${editingExcerptIds.has(excerpt.id) ? 'Save' : 'Edit'}
                 </button>
               </div>
             </div>
@@ -289,6 +283,23 @@ async function updateExcerpt(excerptId, updater) {
 
   excerptState.excerpts[excerptId] = nextExcerpt;
   await saveExcerptState();
+  renderExcerptManager();
+}
+
+async function saveClipEditor(actionTarget) {
+  const excerptId = actionTarget.dataset.excerptId;
+  const item = actionTarget.closest('.excerpt-item');
+  const tagInput = item?.querySelector('[data-role="tag-input"]');
+  const noteInput = item?.querySelector('[data-role="note-input"]');
+  const tag = tagInput?.value || '';
+  const note = noteInput?.value || '';
+
+  await updateExcerpt(excerptId, (excerpt) => {
+    const withTag = addClipTag(excerpt, tag);
+    return updateClipNote(withTag, note);
+  });
+
+  editingExcerptIds.delete(excerptId);
   renderExcerptManager();
 }
 
@@ -355,23 +366,13 @@ function bindExcerptManagerEvents() {
   manager.addEventListener('click', async (event) => {
     const actionTarget = event.target.closest('[data-action]');
     const action = actionTarget?.dataset.action;
-    if (action === 'add-tag') {
-      const item = actionTarget.closest('.excerpt-item');
-      const input = item?.querySelector('[data-role="tag-input"]');
-      const tag = input?.value || '';
-      await updateExcerpt(actionTarget.dataset.excerptId, (excerpt) => addClipTag(excerpt, tag));
-    } else if (action === 'remove-tag') {
+    if (action === 'remove-tag') {
       await updateExcerpt(actionTarget.dataset.excerptId, (excerpt) => removeClipTag(excerpt, actionTarget.dataset.tag));
-    } else if (action === 'save-note') {
-      const item = actionTarget.closest('.excerpt-item');
-      const input = item?.querySelector('[data-role="note-input"]');
-      await updateExcerpt(actionTarget.dataset.excerptId, (excerpt) => updateClipNote(excerpt, input?.value || ''));
     } else if (action === 'open-editor') {
       editingExcerptIds.add(actionTarget.dataset.excerptId);
       renderExcerptManager();
-    } else if (action === 'close-editor' || action === 'cancel-editor') {
-      editingExcerptIds.delete(actionTarget.dataset.excerptId);
-      renderExcerptManager();
+    } else if (action === 'save-editor') {
+      await saveClipEditor(actionTarget);
     }
   });
 
@@ -380,8 +381,8 @@ function bindExcerptManagerEvents() {
 
     event.preventDefault();
     const item = event.target.closest('.excerpt-item');
-    const addButton = item?.querySelector('[data-action="add-tag"]');
-    await updateExcerpt(addButton?.dataset.excerptId, (excerpt) => addClipTag(excerpt, event.target.value));
+    const saveButton = item?.querySelector('[data-action="save-editor"]');
+    if (saveButton) await saveClipEditor(saveButton);
   });
 }
 
