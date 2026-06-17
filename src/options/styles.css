@@ -350,7 +350,7 @@ body {
 
 .excerpt-editor {
   display: grid;
-  gap: 14px;
+  gap: 12px;
   margin-top: 12px;
   padding: 14px;
   border: 1px solid var(--soft-border);
@@ -360,14 +360,17 @@ body {
 
 .editor-section {
   display: grid;
-  gap: 8px;
+  grid-template-columns: 54px minmax(0, 1fr);
+  align-items: start;
+  column-gap: 10px;
 }
 
 .editor-section-header {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  gap: 12px;
+  justify-content: flex-start;
+  gap: 5px;
+  min-height: 28px;
 }
 
 .editor-label {
@@ -377,21 +380,24 @@ body {
 }
 
 .editor-section-content {
-  display: grid;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
   gap: 8px;
+  min-height: 28px;
 }
 
 .editor-add-btn {
   display: inline-grid;
   place-items: center;
-  width: 26px;
-  height: 26px;
+  width: 22px;
+  height: 22px;
   border: 1px solid var(--border-color);
   border-radius: 9999px;
   background: var(--bg-elevated);
   color: var(--text-secondary);
   cursor: pointer;
-  font-size: 18px;
+  font-size: 16px;
   font-weight: 650;
   line-height: 1;
 }
@@ -402,7 +408,6 @@ body {
 }
 
 .editor-note-section {
-  grid-template-columns: 80px minmax(0, 1fr);
   align-items: start;
 }
 
@@ -726,6 +731,11 @@ body {
 
   .editor-note-section {
     grid-template-columns: 1fr;
+  }
+
+  .editor-section {
+    grid-template-columns: 1fr;
+    row-gap: 8px;
   }
 
 }
