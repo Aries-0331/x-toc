@@ -299,6 +299,10 @@ body {
   gap: 6px;
 }
 
+.editor-section-content > .tag-list {
+  display: contents;
+}
+
 .tag-chip {
   display: inline-flex;
   align-items: center;
