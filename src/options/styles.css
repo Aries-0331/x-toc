@@ -143,14 +143,7 @@ body {
 }
 
 .excerpt-search {
-  display: grid;
-  gap: 6px;
-}
-
-.excerpt-search span {
-  color: var(--text-secondary);
-  font-size: 12px;
-  font-weight: 750;
+  display: block;
 }
 
 .excerpt-search input {

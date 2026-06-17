@@ -175,6 +175,7 @@ function renderClipMeta(excerpt) {
 
 function renderExcerptManager() {
   const manager = document.getElementById('excerptManager');
+  const searchInput = document.getElementById('excerptSearchInput');
   const exportMenuBtn = document.getElementById('exportMenuBtn');
   const exportMarkdownMenuItem = document.getElementById('exportMarkdownMenuItem');
   const exportJsonMenuItem = document.getElementById('exportJsonMenuItem');
@@ -205,6 +206,9 @@ function renderExcerptManager() {
   deleteSelectedBtn.classList.toggle('hidden', !hasSelection);
   articleCount.textContent = groups.length;
   excerptCount.textContent = totalExcerpts;
+  if (searchInput && searchInput.value !== excerptSearchQuery) {
+    searchInput.value = excerptSearchQuery;
+  }
 
   if (emptyState) {
     manager.innerHTML = `
@@ -497,10 +501,13 @@ function bindExcerptSearch() {
   const searchInput = document.getElementById('excerptSearchInput');
   if (!searchInput) return;
 
-  searchInput.addEventListener('input', (event) => {
-    excerptSearchQuery = event.target.value;
+  const updateSearchQuery = () => {
+    excerptSearchQuery = searchInput.value;
     renderExcerptManager();
-  });
+  };
+
+  searchInput.addEventListener('input', updateSearchQuery);
+  searchInput.addEventListener('search', updateSearchQuery);
 }
 
 // Initialize
