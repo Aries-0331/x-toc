@@ -117,3 +117,14 @@ export function getClipLibraryEmptyState({ hasSavedClips, hasSearchQuery }) {
 
   return null;
 }
+
+export function getClipDisplayMeta(clip) {
+  const tags = normalizeClipTags(clip?.tags);
+  const note = normalizeClipNote(clip?.note);
+
+  return {
+    tags,
+    hasTags: tags.length > 0,
+    hasNote: note.length > 0
+  };
+}

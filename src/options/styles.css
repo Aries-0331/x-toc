@@ -295,7 +295,6 @@ body {
 .excerpt-tags {
   display: grid;
   gap: 8px;
-  margin-top: 10px;
 }
 
 .tag-list {
@@ -321,6 +320,15 @@ body {
 .tag-chip:hover {
   border-color: var(--danger-color);
   color: var(--danger-color);
+}
+
+.tag-chip-readonly {
+  cursor: default;
+}
+
+.tag-chip-readonly:hover {
+  border-color: var(--soft-border);
+  color: var(--text-secondary);
 }
 
 .tag-editor {
@@ -363,10 +371,19 @@ body {
   color: var(--accent-color);
 }
 
+.excerpt-editor {
+  display: grid;
+  gap: 12px;
+  margin-top: 12px;
+  padding: 12px;
+  border: 1px solid var(--soft-border);
+  border-radius: 10px;
+  background: var(--bg-secondary);
+}
+
 .excerpt-note {
   display: grid;
   gap: 8px;
-  margin-top: 12px;
   max-width: 560px;
 }
 
@@ -400,7 +417,14 @@ body {
   box-shadow: 0 0 0 3px rgba(29, 155, 240, 0.12);
 }
 
-.excerpt-note button {
+.editor-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.excerpt-note button,
+.edit-clip-btn {
   justify-self: start;
   border: 1px solid var(--border-color);
   border-radius: 7px;
@@ -412,9 +436,33 @@ body {
   padding: 7px 10px;
 }
 
-.excerpt-note button:hover {
+.excerpt-note button:hover,
+.edit-clip-btn:hover {
   border-color: var(--accent-color);
   color: var(--accent-color);
+}
+
+.clip-meta-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  margin-top: 8px;
+  min-height: 0;
+}
+
+.clip-meta-row:empty {
+  display: none;
+}
+
+.note-badge {
+  border: 1px solid var(--soft-border);
+  border-radius: 9999px;
+  background: var(--bg-secondary);
+  color: var(--text-secondary);
+  font-size: 12px;
+  font-weight: 700;
+  padding: 4px 7px;
 }
 
 .empty-state strong {
@@ -555,7 +603,17 @@ body {
   color: var(--text-primary);
   font-size: 14px;
   line-height: 1.58;
+  display: -webkit-box;
+  overflow: hidden;
   white-space: pre-wrap;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+}
+
+.excerpt-item.is-editing blockquote {
+  display: block;
+  overflow: visible;
+  -webkit-line-clamp: unset;
 }
 
 .excerpt-footer {
@@ -563,8 +621,14 @@ body {
   align-items: center;
   justify-content: space-between;
   gap: 12px;
-  margin-top: 10px;
+  margin-top: 8px;
   color: var(--text-muted);
+  font-size: 12px;
+}
+
+.edit-clip-btn {
+  flex: 0 0 auto;
+  padding: 5px 9px;
   font-size: 12px;
 }
 

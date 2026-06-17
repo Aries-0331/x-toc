@@ -4,6 +4,7 @@ import test from 'node:test';
 import {
   addClipTag,
   filterExcerptGroups,
+  getClipDisplayMeta,
   getClipLibraryEmptyState,
   normalizeClipNote,
   normalizeClipTags,
@@ -218,4 +219,27 @@ test('getClipLibraryEmptyState returns search no-result copy', () => {
       message: 'Try a different search term.'
     }
   );
+});
+
+test('getClipDisplayMeta summarizes tags and notes for compact display', () => {
+  assert.deepEqual(
+    getClipDisplayMeta({
+      ...baseClip,
+      tags: [' product ', 'product', 'Quote'],
+      note: '  useful note  '
+    }),
+    {
+      tags: ['product', 'Quote'],
+      hasTags: true,
+      hasNote: true
+    }
+  );
+});
+
+test('getClipDisplayMeta handles old clips without optional metadata', () => {
+  assert.deepEqual(getClipDisplayMeta(baseClip), {
+    tags: [],
+    hasTags: false,
+    hasNote: false
+  });
 });

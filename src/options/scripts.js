@@ -1,6 +1,7 @@
 import {
   addClipTag,
   filterExcerptGroups,
+  getClipDisplayMeta,
   getClipLibraryEmptyState,
   removeClipTag,
   updateClipNote
@@ -24,6 +25,7 @@ let excerptState = {
 };
 
 let selectedExcerptIds = new Set();
+let editingExcerptIds = new Set();
 let excerptSearchQuery = '';
 
 async function loadExcerptData() {
@@ -105,6 +107,67 @@ function getSelectedExcerptCount() {
   return selectedExcerptIds.size;
 }
 
+function renderTagChips(excerpt, { editable }) {
+  const displayMeta = getClipDisplayMeta(excerpt);
+  if (!displayMeta.hasTags) return '';
+
+  return `
+    <div class="tag-list">
+      ${displayMeta.tags.map((tag) => {
+        if (!editable) {
+          return `<span class="tag-chip tag-chip-readonly">${escapeHtml(tag)}</span>`;
+        }
+
+        return `
+          <button class="tag-chip" type="button" data-action="remove-tag" data-excerpt-id="${escapeHtml(excerpt.id)}" data-tag="${escapeHtml(tag)}" title="Remove tag">
+            <span>${escapeHtml(tag)}</span>
+            <span aria-hidden="true">×</span>
+          </button>
+        `;
+      }).join('')}
+    </div>
+  `;
+}
+
+function renderClipEditor(excerpt) {
+  return `
+    <div class="excerpt-editor">
+      <div class="excerpt-tags" aria-label="Clip tags">
+        ${renderTagChips(excerpt, { editable: true })}
+        <div class="tag-editor">
+          <input type="text" data-role="tag-input" aria-label="Add tag" placeholder="Add tag">
+          <button type="button" data-action="add-tag" data-excerpt-id="${escapeHtml(excerpt.id)}">Add</button>
+        </div>
+      </div>
+      <div class="excerpt-note">
+        <label>
+          <span>Note</span>
+          <textarea data-role="note-input" rows="2" placeholder="Add a note">${escapeHtml(excerpt.note || '')}</textarea>
+        </label>
+        <div class="editor-actions">
+          <button type="button" data-action="save-note" data-excerpt-id="${escapeHtml(excerpt.id)}">Save note</button>
+          <button type="button" data-action="close-editor" data-excerpt-id="${escapeHtml(excerpt.id)}">Done</button>
+          <button type="button" data-action="cancel-editor" data-excerpt-id="${escapeHtml(excerpt.id)}">Cancel</button>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+function renderClipMeta(excerpt) {
+  const displayMeta = getClipDisplayMeta(excerpt);
+  const noteBadge = displayMeta.hasNote
+    ? '<span class="note-badge">Note</span>'
+    : '';
+
+  return `
+    <div class="clip-meta-row">
+      ${renderTagChips(excerpt, { editable: false })}
+      ${noteBadge}
+    </div>
+  `;
+}
+
 function renderExcerptManager() {
   const manager = document.getElementById('excerptManager');
   const exportMenuBtn = document.getElementById('exportMenuBtn');
@@ -169,35 +232,18 @@ function renderExcerptManager() {
 
       <ul class="excerpt-list">
         ${excerpts.map((excerpt) => `
-          <li class="excerpt-item" data-excerpt-id="${escapeHtml(excerpt.id)}">
+          <li class="excerpt-item ${editingExcerptIds.has(excerpt.id) ? 'is-editing' : ''}" data-excerpt-id="${escapeHtml(excerpt.id)}">
             <label class="excerpt-select" title="Select clip">
               <input type="checkbox" data-action="select-excerpt" data-excerpt-id="${escapeHtml(excerpt.id)}" ${selectedExcerptIds.has(excerpt.id) ? 'checked' : ''}>
             </label>
             <div class="excerpt-content">
               <blockquote>${escapeHtml(excerpt.text)}</blockquote>
-              <div class="excerpt-tags" aria-label="Clip tags">
-                <div class="tag-list">
-                  ${(excerpt.tags || []).map((tag) => `
-                    <button class="tag-chip" type="button" data-action="remove-tag" data-excerpt-id="${escapeHtml(excerpt.id)}" data-tag="${escapeHtml(tag)}" title="Remove tag">
-                      <span>${escapeHtml(tag)}</span>
-                      <span aria-hidden="true">×</span>
-                    </button>
-                  `).join('')}
-                </div>
-                <div class="tag-editor">
-                  <input type="text" data-role="tag-input" aria-label="Add tag" placeholder="Add tag">
-                  <button type="button" data-action="add-tag" data-excerpt-id="${escapeHtml(excerpt.id)}">Add</button>
-                </div>
-              </div>
-              <div class="excerpt-note">
-                <label>
-                  <span>Note</span>
-                  <textarea data-role="note-input" rows="2" placeholder="Add a note">${escapeHtml(excerpt.note || '')}</textarea>
-                </label>
-                <button type="button" data-action="save-note" data-excerpt-id="${escapeHtml(excerpt.id)}">Save note</button>
-              </div>
+              ${editingExcerptIds.has(excerpt.id) ? renderClipEditor(excerpt) : renderClipMeta(excerpt)}
               <div class="excerpt-footer">
                 <span>Saved ${escapeHtml(formatDisplayDate(excerpt.createdAt))}</span>
+                <button class="edit-clip-btn" type="button" data-action="${editingExcerptIds.has(excerpt.id) ? 'close-editor' : 'open-editor'}" data-excerpt-id="${escapeHtml(excerpt.id)}">
+                  ${editingExcerptIds.has(excerpt.id) ? 'Done' : 'Edit'}
+                </button>
               </div>
             </div>
           </li>
@@ -320,6 +366,12 @@ function bindExcerptManagerEvents() {
       const item = actionTarget.closest('.excerpt-item');
       const input = item?.querySelector('[data-role="note-input"]');
       await updateExcerpt(actionTarget.dataset.excerptId, (excerpt) => updateClipNote(excerpt, input?.value || ''));
+    } else if (action === 'open-editor') {
+      editingExcerptIds.add(actionTarget.dataset.excerptId);
+      renderExcerptManager();
+    } else if (action === 'close-editor' || action === 'cancel-editor') {
+      editingExcerptIds.delete(actionTarget.dataset.excerptId);
+      renderExcerptManager();
     }
   });
 
