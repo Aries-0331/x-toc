@@ -456,12 +456,17 @@ body {
   color: var(--accent-color);
 }
 
+.clip-meta {
+  display: grid;
+  gap: 7px;
+  margin-top: 8px;
+}
+
 .clip-meta-row {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
   gap: 8px;
-  margin-top: 8px;
   min-height: 0;
 }
 
@@ -469,14 +474,17 @@ body {
   display: none;
 }
 
-.note-badge {
-  border: 1px solid var(--soft-border);
-  border-radius: 9999px;
+.clip-note {
+  max-width: min(100%, 720px);
+  border-left: 3px solid var(--accent-color);
+  border-radius: 0 8px 8px 0;
   background: var(--bg-secondary);
   color: var(--text-secondary);
-  font-size: 12px;
-  font-weight: 700;
-  padding: 4px 7px;
+  font-size: 13px;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+  padding: 8px 10px;
+  white-space: pre-wrap;
 }
 
 .empty-state strong {

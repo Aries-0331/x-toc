@@ -3,6 +3,7 @@ import {
   filterExcerptGroups,
   getClipDisplayMeta,
   getClipLibraryEmptyState,
+  normalizeClipNote,
   removeClipTag,
   updateClipNote
 } from './clip-utils.js';
@@ -154,14 +155,20 @@ function renderClipEditor(excerpt) {
 
 function renderClipMeta(excerpt) {
   const displayMeta = getClipDisplayMeta(excerpt);
-  const noteBadge = displayMeta.hasNote
-    ? '<span class="note-badge">Note</span>'
+  const tagsHtml = renderTagChips(excerpt, { editable: false });
+  const note = normalizeClipNote(excerpt.note);
+  const noteHtml = displayMeta.hasNote
+    ? `<div class="clip-note">${escapeHtml(note)}</div>`
     : '';
 
+  if (!tagsHtml && !noteHtml) return '';
+
   return `
-    <div class="clip-meta-row">
-      ${renderTagChips(excerpt, { editable: false })}
-      ${noteBadge}
+    <div class="clip-meta">
+      <div class="clip-meta-row">
+        ${tagsHtml}
+      </div>
+      ${noteHtml}
     </div>
   `;
 }
