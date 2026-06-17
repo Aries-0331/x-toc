@@ -18,10 +18,10 @@
       <section class="settings-section excerpt-section">
         <div class="section-header">
           <div class="section-title-block">
-            <h2>Saved Excerpts</h2>
-            <div class="compact-stats" aria-label="Saved excerpt stats">
+            <h2>Saved Clips</h2>
+            <div class="compact-stats" aria-label="Saved clip stats">
               <span><strong id="articleCount">0</strong> articles</span>
-              <span><strong id="excerptCount">0</strong> excerpts</span>
+              <span><strong id="excerptCount">0</strong> clips</span>
             </div>
           </div>
           <div class="excerpt-actions">
@@ -32,21 +32,26 @@
             <div class="dropdown" id="exportDropdown">
               <button class="btn-compact" id="exportMenuBtn" type="button" aria-expanded="false" aria-haspopup="true">Export</button>
               <div class="dropdown-menu" id="exportMenu" role="menu">
-                <button type="button" id="exportMarkdownMenuItem" data-action="export-markdown" role="menuitem">All excerpts as Markdown</button>
-                <button type="button" id="exportJsonMenuItem" data-action="export-json" role="menuitem">All excerpts as JSON</button>
+                <button type="button" id="exportMarkdownMenuItem" data-action="export-markdown" role="menuitem">All clips as Markdown</button>
+                <button type="button" id="exportJsonMenuItem" data-action="export-json" role="menuitem">All clips as JSON</button>
               </div>
             </div>
             <button class="btn-compact danger hidden" id="deleteSelectedBtn" type="button">Delete selected</button>
           </div>
         </div>
+        <div class="excerpt-search-row">
+          <div class="excerpt-search" role="search">
+            <input id="excerptSearchInput" type="search" autocomplete="off" aria-label="Search clips" placeholder="Search text, title, author, tags, or notes">
+          </div>
+        </div>
 
         <div id="excerptManager" class="excerpt-manager">
-          <p class="empty-state">No saved excerpts yet.</p>
+          <p class="empty-state">No saved clips yet.</p>
         </div>
       </section>
     </main>
   </div>
 
-  <script src="scripts.js"></script>
+  <script type="module" src="scripts.js"></script>
 </body>
 </html>

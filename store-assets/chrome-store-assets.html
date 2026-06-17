@@ -1,0 +1,707 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>X-TOC Chrome Web Store Assets</title>
+  <style>
+    :root {
+      --ink: #111820;
+      --muted: #536471;
+      --soft: #edf1f5;
+      --line: #d9e1e8;
+      --panel: #ffffff;
+      --wash: #f6f8fb;
+      --blue: #1d9bf0;
+      --blue-strong: #0c7ecf;
+      --green: #00a36c;
+      --orange: #d96c15;
+      --shadow: 0 28px 70px rgba(15, 20, 25, 0.16);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      margin: 0;
+      min-width: 1400px;
+      min-height: 800px;
+      overflow: hidden;
+      background: #eaf0f6;
+      color: var(--ink);
+      font-family: ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+      letter-spacing: 0;
+    }
+
+    body {
+      display: grid;
+      place-items: start;
+    }
+
+    .asset {
+      position: relative;
+      display: none;
+      overflow: hidden;
+      background:
+        linear-gradient(90deg, rgba(255, 255, 255, 0.86), rgba(255, 255, 255, 0.38)),
+        linear-gradient(135deg, #f8fbfd 0%, #eef4f9 48%, #e7eef5 100%);
+    }
+
+    .asset::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      opacity: 0.35;
+      background-image:
+        linear-gradient(rgba(17, 24, 32, 0.055) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(17, 24, 32, 0.055) 1px, transparent 1px);
+      background-size: 36px 36px;
+      mask-image: linear-gradient(120deg, #000 0%, rgba(0, 0, 0, 0.45) 48%, transparent 100%);
+    }
+
+    body[data-variant="screenshot"] .screenshot,
+    body[data-variant="marquee"] .marquee {
+      display: block;
+    }
+
+    .screenshot {
+      width: 1280px;
+      height: 800px;
+      padding: 40px 46px;
+    }
+
+    .marquee {
+      width: 1400px;
+      height: 560px;
+      padding: 46px 60px;
+    }
+
+    .brand {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .logo {
+      width: 62px;
+      height: 62px;
+      border-radius: 18px;
+      box-shadow: 0 18px 42px rgba(15, 20, 25, 0.18);
+    }
+
+    .brand-name {
+      font-size: 29px;
+      font-weight: 860;
+      line-height: 1;
+    }
+
+    .brand-sub {
+      margin-top: 5px;
+      color: var(--muted);
+      font-size: 15px;
+      font-weight: 720;
+    }
+
+    .screenshot .headline {
+      position: relative;
+      z-index: 1;
+      display: grid;
+      grid-template-columns: 390px 1fr;
+      gap: 26px;
+      align-items: end;
+      margin-top: 34px;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: 48px;
+      line-height: 1.03;
+      letter-spacing: 0;
+    }
+
+    .lead {
+      color: var(--muted);
+      font-size: 22px;
+      font-weight: 690;
+      line-height: 1.32;
+    }
+
+    .screenshot .stage {
+      position: relative;
+      z-index: 1;
+      display: grid;
+      grid-template-columns: 430px 1fr;
+      gap: 28px;
+      margin-top: 34px;
+    }
+
+    .browser,
+    .options-window,
+    .floating-panel,
+    .promo-panel {
+      border: 1px solid rgba(118, 134, 150, 0.24);
+      background: rgba(255, 255, 255, 0.92);
+      box-shadow: var(--shadow);
+    }
+
+    .browser {
+      overflow: hidden;
+      height: 456px;
+      border-radius: 24px;
+    }
+
+    .chrome-bar {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      height: 42px;
+      padding: 0 18px;
+      border-bottom: 1px solid var(--soft);
+      background: #f7f9fb;
+    }
+
+    .dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: #c8d0d8;
+    }
+
+    .url {
+      margin-left: 8px;
+      border-radius: 999px;
+      background: #edf2f6;
+      color: #7a8793;
+      font-size: 13px;
+      font-weight: 740;
+      padding: 7px 13px;
+    }
+
+    .article-page {
+      position: relative;
+      padding: 30px 34px;
+    }
+
+    .article-kicker {
+      color: var(--blue-strong);
+      font-size: 14px;
+      font-weight: 840;
+    }
+
+    .article-title {
+      margin-top: 10px;
+      font-size: 30px;
+      font-weight: 880;
+      line-height: 1.12;
+    }
+
+    .article-meta {
+      margin-top: 13px;
+      color: var(--muted);
+      font-size: 15px;
+      font-weight: 700;
+    }
+
+    .article-line {
+      height: 10px;
+      margin-top: 18px;
+      border-radius: 999px;
+      background: #edf1f5;
+    }
+
+    .article-line.short {
+      width: 70%;
+    }
+
+    .selection {
+      margin-top: 20px;
+      border-radius: 16px;
+      background: #dff0ff;
+      color: #15354d;
+      font-size: 17px;
+      font-weight: 700;
+      line-height: 1.45;
+      padding: 15px 16px;
+    }
+
+    .save-button {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      margin-top: 14px;
+      border-radius: 999px;
+      background: var(--ink);
+      color: white;
+      font-size: 15px;
+      font-weight: 840;
+      padding: 10px 15px;
+      box-shadow: 0 16px 30px rgba(15, 20, 25, 0.22);
+    }
+
+    .floating-panel {
+      position: absolute;
+      right: 20px;
+      bottom: 20px;
+      width: 190px;
+      border-radius: 18px;
+      padding: 16px;
+    }
+
+    .panel-title {
+      font-size: 15px;
+      font-weight: 880;
+    }
+
+    .toc-item {
+      margin-top: 10px;
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 760;
+      line-height: 1.25;
+    }
+
+    .toc-item.active {
+      color: var(--blue-strong);
+    }
+
+    .options-window {
+      overflow: hidden;
+      height: 456px;
+      border-radius: 24px;
+    }
+
+    .screenshot .options-window {
+      height: 520px;
+    }
+
+    .screenshot .options-head {
+      padding: 18px 24px;
+    }
+
+    .screenshot .search {
+      margin-top: 14px;
+      padding-top: 12px;
+      padding-bottom: 12px;
+    }
+
+    .screenshot .clip-list {
+      gap: 12px;
+      padding-top: 14px;
+      padding-bottom: 18px;
+    }
+
+    .screenshot .clip-card-head {
+      padding-top: 12px;
+      padding-bottom: 12px;
+    }
+
+    .screenshot .clip-body {
+      padding-top: 14px;
+      padding-bottom: 14px;
+    }
+
+    .screenshot .quote {
+      font-size: 16px;
+      line-height: 1.36;
+    }
+
+    .screenshot .tags {
+      margin-top: 9px;
+    }
+
+    .screenshot .note {
+      margin-top: 8px;
+      font-size: 12px;
+      padding-top: 7px;
+      padding-bottom: 7px;
+    }
+
+    .options-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 20px 24px;
+      border-bottom: 1px solid var(--soft);
+    }
+
+    .saved-title {
+      display: flex;
+      align-items: center;
+      gap: 11px;
+      font-size: 25px;
+      font-weight: 880;
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      border: 1px solid var(--soft);
+      border-radius: 999px;
+      background: var(--wash);
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 820;
+      padding: 6px 10px;
+      white-space: nowrap;
+    }
+
+    .export {
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: white;
+      font-size: 15px;
+      font-weight: 840;
+      padding: 10px 17px;
+    }
+
+    .search {
+      margin: 16px 24px 0;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      color: #7a8793;
+      font-size: 16px;
+      font-weight: 650;
+      padding: 13px 15px;
+    }
+
+    .clip-list {
+      display: grid;
+      gap: 14px;
+      padding: 16px 24px 24px;
+    }
+
+    .clip-card {
+      overflow: hidden;
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      background: white;
+    }
+
+    .clip-card-head {
+      display: flex;
+      justify-content: space-between;
+      gap: 14px;
+      padding: 14px 17px;
+      border-bottom: 1px solid var(--soft);
+      background: linear-gradient(180deg, #ffffff, #f7f9fb);
+    }
+
+    .clip-article {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      font-size: 17px;
+      font-weight: 860;
+    }
+
+    .clip-body {
+      display: grid;
+      grid-template-columns: 18px minmax(0, 1fr);
+      gap: 13px;
+      padding: 16px 17px;
+    }
+
+    .check {
+      width: 18px;
+      height: 18px;
+      margin-top: 4px;
+      border: 2px solid #8a98a6;
+      border-radius: 5px;
+    }
+
+    .quote {
+      color: var(--ink);
+      font-size: 17px;
+      font-weight: 700;
+      line-height: 1.45;
+    }
+
+    .tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 7px;
+      margin-top: 11px;
+    }
+
+    .tag {
+      border: 1px solid var(--soft);
+      border-radius: 999px;
+      background: var(--wash);
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 820;
+      padding: 5px 9px;
+    }
+
+    .note {
+      margin-top: 10px;
+      border-left: 3px solid var(--blue);
+      border-radius: 0 11px 11px 0;
+      background: var(--wash);
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 680;
+      line-height: 1.45;
+      padding: 8px 10px;
+    }
+
+    .marquee .layout {
+      position: relative;
+      z-index: 1;
+      display: grid;
+      grid-template-columns: 440px 1fr;
+      gap: 48px;
+      align-items: center;
+      height: 100%;
+    }
+
+    .marquee h1 {
+      margin-top: 28px;
+      font-size: 54px;
+      line-height: 1.02;
+    }
+
+    .marquee .lead {
+      margin-top: 18px;
+      font-size: 22px;
+      line-height: 1.34;
+    }
+
+    .feature-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 26px;
+    }
+
+    .feature-chip {
+      border: 1px solid rgba(118, 134, 150, 0.26);
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.82);
+      color: var(--ink);
+      font-size: 15px;
+      font-weight: 840;
+      padding: 9px 13px;
+    }
+
+    .promo-panel {
+      position: relative;
+      overflow: hidden;
+      height: 438px;
+      border-radius: 28px;
+      background: white;
+    }
+
+    .promo-panel::after {
+      content: "";
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      height: 120px;
+      background: linear-gradient(180deg, transparent, rgba(255, 255, 255, 0.92));
+      pointer-events: none;
+    }
+
+    .promo-panel .options-head {
+      padding: 22px 26px;
+    }
+
+    .promo-panel .search {
+      margin: 18px 26px 0;
+    }
+
+    .promo-panel .clip-list {
+      padding: 18px 26px 28px;
+    }
+
+    .promo-badge {
+      position: absolute;
+      right: 28px;
+      bottom: 24px;
+      z-index: 2;
+      border-radius: 18px;
+      background: var(--ink);
+      color: white;
+      font-size: 18px;
+      font-weight: 860;
+      padding: 13px 17px;
+      box-shadow: 0 20px 50px rgba(15, 20, 25, 0.24);
+    }
+  </style>
+</head>
+<body>
+  <section class="asset screenshot" aria-label="Chrome Web Store screenshot">
+    <div class="brand">
+      <img class="logo" src="../src/logo.png" alt="">
+      <div>
+        <div class="brand-name">X-TOC</div>
+        <div class="brand-sub">TOC & Clips for X Articles</div>
+      </div>
+    </div>
+
+    <div class="headline">
+      <h1>Read, clip, and export X Articles.</h1>
+      <div class="lead">A focused reading helper with floating navigation, local clips, tags, notes, search, and Markdown or JSON export.</div>
+    </div>
+
+    <div class="stage">
+      <div class="browser">
+        <div class="chrome-bar">
+          <span class="dot"></span>
+          <span class="dot"></span>
+          <span class="dot"></span>
+          <span class="url">x.com/example/article</span>
+        </div>
+        <div class="article-page">
+          <div class="article-kicker">X Article</div>
+          <div class="article-title">Lessons from building reliable AI workflows</div>
+          <div class="article-meta">Long-form article with headings and sections</div>
+          <div class="article-line"></div>
+          <div class="article-line short"></div>
+          <div class="selection">Persistent agents need reliability and security because longer workflows amplify mistakes, access risks, and recovery problems.</div>
+          <div class="save-button">Save to X-TOC</div>
+          <div class="floating-panel">
+            <div class="panel-title">Table of Contents</div>
+            <div class="toc-item active">1. Reliability basics</div>
+            <div class="toc-item">2. Human checkpoints</div>
+            <div class="toc-item">3. Export useful notes</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="options-window">
+        <div class="options-head">
+          <div class="saved-title">
+            Saved Clips
+            <span class="pill">6 articles</span>
+            <span class="pill">12 clips</span>
+          </div>
+          <div class="export">Export</div>
+        </div>
+        <div class="search">Search text, title, author, tags, or notes</div>
+        <div class="clip-list">
+          <div class="clip-card">
+            <div class="clip-card-head">
+              <div class="clip-article">Lessons from building reliable AI workflows</div>
+              <span class="pill">2 clips</span>
+            </div>
+            <div class="clip-body">
+              <div class="check"></div>
+              <div>
+                <div class="quote">Long workflows make mistakes more expensive, so review points and recovery paths become product features.</div>
+                <div class="tags">
+                  <span class="tag">agents</span>
+                  <span class="tag">reliability</span>
+                  <span class="tag">workflow</span>
+                </div>
+                <div class="note">Useful reminder: agent UX is not just automation, it is failure handling.</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="clip-card">
+            <div class="clip-card-head">
+              <div class="clip-article">You Don't Know Embodied AI</div>
+              <span class="pill">3 clips</span>
+            </div>
+            <div class="clip-body">
+              <div class="check"></div>
+              <div>
+                <div class="quote">Language becomes harder when it has to pass through motors, latency, power limits, and physical error.</div>
+                <div class="tags">
+                  <span class="tag">embodied-ai</span>
+                  <span class="tag">robotics</span>
+                  <span class="tag">notes</span>
+                </div>
+                <div class="note">Good contrast between software intent and physical constraints.</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="asset marquee" aria-label="Chrome Web Store marquee promo tile">
+    <div class="layout">
+      <div>
+        <div class="brand">
+          <img class="logo" src="../src/logo.png" alt="">
+          <div>
+            <div class="brand-name">X-TOC</div>
+            <div class="brand-sub">TOC & Clips for X Articles</div>
+          </div>
+        </div>
+        <h1>Turn X Articles into searchable clips.</h1>
+        <div class="lead">Navigate long reads, save important passages locally, and export your notes when you need them.</div>
+        <div class="feature-row">
+          <span class="feature-chip">Floating TOC</span>
+          <span class="feature-chip">Local clips</span>
+          <span class="feature-chip">Tags & notes</span>
+          <span class="feature-chip">Markdown / JSON</span>
+        </div>
+      </div>
+
+      <div class="promo-panel">
+        <div class="options-head">
+          <div class="saved-title">
+            Saved Clips
+            <span class="pill">6 articles</span>
+            <span class="pill">12 clips</span>
+          </div>
+          <div class="export">Export</div>
+        </div>
+        <div class="search">Search saved passages</div>
+        <div class="clip-list">
+          <div class="clip-card">
+            <div class="clip-card-head">
+              <div class="clip-article">Lessons from building reliable AI workflows</div>
+              <span class="pill">2 clips</span>
+            </div>
+            <div class="clip-body">
+              <div class="check"></div>
+              <div>
+                <div class="quote">Long workflows make mistakes more expensive, so review points and recovery paths become product features.</div>
+                <div class="tags">
+                  <span class="tag">agents</span>
+                  <span class="tag">reliability</span>
+                  <span class="tag">workflow</span>
+                </div>
+                <div class="note">Agent UX is not just automation, it is failure handling.</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="clip-card">
+            <div class="clip-card-head">
+              <div class="clip-article">You Don't Know Embodied AI</div>
+              <span class="pill">3 clips</span>
+            </div>
+            <div class="clip-body">
+              <div class="check"></div>
+              <div>
+                <div class="quote">Language becomes harder when it has to pass through motors, latency, power limits, and physical error.</div>
+                <div class="tags">
+                  <span class="tag">embodied-ai</span>
+                  <span class="tag">robotics</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="promo-badge">Save locally. Export anytime.</div>
+      </div>
+    </div>
+  </section>
+
+  <script>
+    const params = new URLSearchParams(window.location.search);
+    document.body.dataset.variant = params.get('variant') || 'screenshot';
+  </script>
+</body>
+</html>

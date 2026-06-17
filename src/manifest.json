@@ -2,9 +2,9 @@
   "$schema": "https://json.schemastore.org/chrome-manifest.json",
   "chromium:manifest_version": 3,
   "firefox:manifest_version": 2,
-  "version": "0.3.0",
-  "name": "X & Twitter Article TOC",
-  "description": "Add a floating table of contents and save useful excerpts while reading X/Twitter long-form articles.",
+  "version": "0.4.7",
+  "name": "X-TOC: TOC & Clips for X Articles",
+  "description": "Navigate X Articles with a floating TOC and save useful passages locally.",
   "icons": {
     "16": "logo.png",
     "32": "logo.png",
@@ -19,7 +19,7 @@
       "128": "logo.png"
     },
     "default_popup": "popup/index.html",
-    "default_title": "X & Twitter Article TOC"
+    "default_title": "X-TOC"
   },
   "chromium:options_page": "options/index.html",
   "firefox:browser_action": {
@@ -30,12 +30,11 @@
       "128": "logo.png"
     },
     "default_popup": "popup/index.html",
-    "default_title": "X & Twitter Article TOC"
+    "default_title": "X-TOC"
   },
   "chromium:permissions": [
     "contextMenus",
     "activeTab",
-    "scripting",
     "storage"
   ],
   "chromium:host_permissions": [
