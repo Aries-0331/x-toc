@@ -14,6 +14,16 @@ function markdownValue(value) {
   return value || 'Unknown';
 }
 
+function inlineCode(value) {
+  const text = String(value || '').replace(/\r?\n/g, ' ').trim();
+  const backtickRuns = text.match(/`+/g) || [];
+  const fenceLength = Math.max(1, ...backtickRuns.map((run) => run.length + 1));
+  const fence = '`'.repeat(fenceLength);
+  const needsPadding = text.startsWith('`') || text.endsWith('`');
+  const content = needsPadding ? ` ${text} ` : text;
+  return `${fence}${content}${fence}`;
+}
+
 function formatAuthor(article) {
   if (article.authorName && article.authorHandle) {
     return `${article.authorName} (${article.authorHandle})`;
@@ -29,7 +39,7 @@ function contextForMarkdown(excerpt) {
 
 function tagsForMarkdown(excerpt) {
   if (!Array.isArray(excerpt.tags) || excerpt.tags.length === 0) return 'None';
-  return excerpt.tags.map((tag) => `#${tag}`).join(' ');
+  return excerpt.tags.map(inlineCode).join(', ');
 }
 
 function noteForMarkdown(excerpt) {

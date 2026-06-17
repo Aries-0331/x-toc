@@ -41,9 +41,23 @@ const groups = [
 test('renderAllMarkdown includes clip tags and notes', () => {
   const markdown = renderAllMarkdown(groups, '2026-06-16T04:00:00.000Z');
 
-  assert.match(markdown, /Tags: #product #quote/);
+  assert.match(markdown, /Tags: `product`, `quote`/);
   assert.match(markdown, /Note:\n\n> Use this later\./);
   assert.match(markdown, /Updated at: 2026-06-16T03:30:00.000Z/);
+});
+
+test('renderAllMarkdown keeps user tag text readable', () => {
+  const markdown = renderAllMarkdown([
+    {
+      article: groups[0].article,
+      excerpts: [{
+        ...groups[0].excerpts[0],
+        tags: ['AI Coding', 'product*note', '中文 标签']
+      }]
+    }
+  ], '2026-06-16T04:00:00.000Z');
+
+  assert.match(markdown, /Tags: `AI Coding`, `product\*note`, `中文 标签`/);
 });
 
 test('renderAllJson includes clip metadata fields', () => {
