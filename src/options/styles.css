@@ -292,11 +292,6 @@ body {
   text-align: center;
 }
 
-.excerpt-tags {
-  display: grid;
-  gap: 8px;
-}
-
 .tag-list {
   display: flex;
   flex-wrap: wrap;
@@ -355,32 +350,63 @@ body {
 
 .excerpt-editor {
   display: grid;
-  gap: 12px;
+  gap: 14px;
   margin-top: 12px;
-  padding: 12px;
+  padding: 14px;
   border: 1px solid var(--soft-border);
   border-radius: 10px;
   background: var(--bg-secondary);
 }
 
-.excerpt-note {
+.editor-section {
   display: grid;
   gap: 8px;
-  max-width: 560px;
 }
 
-.excerpt-note label {
-  display: grid;
-  gap: 6px;
+.editor-section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
 }
 
-.excerpt-note span {
+.editor-label {
   color: var(--text-secondary);
   font-size: 12px;
   font-weight: 750;
 }
 
-.excerpt-note textarea {
+.editor-section-content {
+  display: grid;
+  gap: 8px;
+}
+
+.editor-add-btn {
+  display: inline-grid;
+  place-items: center;
+  width: 26px;
+  height: 26px;
+  border: 1px solid var(--border-color);
+  border-radius: 9999px;
+  background: var(--bg-elevated);
+  color: var(--text-secondary);
+  cursor: pointer;
+  font-size: 18px;
+  font-weight: 650;
+  line-height: 1;
+}
+
+.editor-add-btn:hover {
+  border-color: var(--accent-color);
+  color: var(--accent-color);
+}
+
+.editor-note-section {
+  grid-template-columns: 80px minmax(0, 1fr);
+  align-items: start;
+}
+
+.editor-note-section textarea {
   width: 100%;
   resize: vertical;
   border: 1px solid var(--border-color);
@@ -394,7 +420,7 @@ body {
   padding: 9px 10px;
 }
 
-.excerpt-note textarea:focus {
+.editor-note-section textarea:focus {
   border-color: var(--accent-color);
   box-shadow: 0 0 0 3px rgba(29, 155, 240, 0.12);
 }
@@ -696,6 +722,10 @@ body {
   .excerpt-footer {
     align-items: flex-start;
     flex-direction: column;
+  }
+
+  .editor-note-section {
+    grid-template-columns: 1fr;
   }
 
 }

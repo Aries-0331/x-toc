@@ -132,17 +132,21 @@ function renderTagChips(excerpt, { editable }) {
 function renderClipEditor(excerpt) {
   return `
     <div class="excerpt-editor">
-      <div class="excerpt-tags" aria-label="Clip tags">
-        ${renderTagChips(excerpt, { editable: true })}
-        <div class="tag-editor">
-          <input type="text" data-role="tag-input" aria-label="Add tag" placeholder="Add tag">
+      <div class="editor-section editor-tags-section" aria-label="Clip tags">
+        <div class="editor-section-header">
+          <span class="editor-label">Tags</span>
+          <button class="editor-add-btn" type="button" data-action="show-tag-input" data-excerpt-id="${escapeHtml(excerpt.id)}" aria-label="Add tag">+</button>
+        </div>
+        <div class="editor-section-content">
+          ${renderTagChips(excerpt, { editable: true })}
+          <div class="tag-editor hidden" data-role="tag-editor">
+            <input type="text" data-role="tag-input" aria-label="Add tag" placeholder="Add tag">
+          </div>
         </div>
       </div>
-      <div class="excerpt-note">
-        <label>
-          <span>Note</span>
-          <textarea data-role="note-input" rows="2" placeholder="Add a note">${escapeHtml(excerpt.note || '')}</textarea>
-        </label>
+      <div class="editor-section editor-note-section">
+        <span class="editor-label">Note</span>
+        <textarea data-role="note-input" rows="2" placeholder="Add a note">${escapeHtml(excerpt.note || '')}</textarea>
       </div>
     </div>
   `;
@@ -303,6 +307,26 @@ async function saveClipEditor(actionTarget) {
   renderExcerptManager();
 }
 
+async function saveTagInput(input) {
+  const item = input.closest('.excerpt-item');
+  const excerptId = item?.dataset.excerptId;
+  const noteInput = item?.querySelector('[data-role="note-input"]');
+  const tag = input.value || '';
+  const note = noteInput?.value || '';
+  const excerpt = excerptState.excerpts[excerptId];
+  if (!excerpt) return;
+
+  if (!tag.trim()) {
+    input.closest('[data-role="tag-editor"]')?.classList.add('hidden');
+    return;
+  }
+
+  const withTag = addClipTag(excerpt, tag);
+  excerptState.excerpts[excerptId] = updateClipNote(withTag, note);
+  await saveExcerptState();
+  renderExcerptManager();
+}
+
 function currentDateSlug() {
   return new Date().toISOString().slice(0, 10);
 }
@@ -368,6 +392,12 @@ function bindExcerptManagerEvents() {
     const action = actionTarget?.dataset.action;
     if (action === 'remove-tag') {
       await updateExcerpt(actionTarget.dataset.excerptId, (excerpt) => removeClipTag(excerpt, actionTarget.dataset.tag));
+    } else if (action === 'show-tag-input') {
+      const item = actionTarget.closest('.excerpt-item');
+      const editor = item?.querySelector('[data-role="tag-editor"]');
+      const input = editor?.querySelector('[data-role="tag-input"]');
+      editor?.classList.remove('hidden');
+      input?.focus();
     } else if (action === 'open-editor') {
       editingExcerptIds.add(actionTarget.dataset.excerptId);
       renderExcerptManager();
@@ -380,9 +410,7 @@ function bindExcerptManagerEvents() {
     if (event.key !== 'Enter' || event.target.dataset.role !== 'tag-input') return;
 
     event.preventDefault();
-    const item = event.target.closest('.excerpt-item');
-    const saveButton = item?.querySelector('[data-action="save-editor"]');
-    if (saveButton) await saveClipEditor(saveButton);
+    await saveTagInput(event.target);
   });
 }
 
