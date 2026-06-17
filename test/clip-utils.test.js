@@ -213,11 +213,26 @@ test('getClipLibraryEmptyState returns no clips copy', () => {
 
 test('getClipLibraryEmptyState returns search no-result copy', () => {
   assert.deepEqual(
-    getClipLibraryEmptyState({ hasSavedClips: true, hasSearchQuery: true }),
+    getClipLibraryEmptyState({
+      hasSavedClips: true,
+      hasSearchQuery: true,
+      hasMatchingClips: false
+    }),
     {
       title: 'No matching clips',
       message: 'Try a different search term.'
     }
+  );
+});
+
+test('getClipLibraryEmptyState keeps matching search results visible', () => {
+  assert.equal(
+    getClipLibraryEmptyState({
+      hasSavedClips: true,
+      hasSearchQuery: true,
+      hasMatchingClips: true
+    }),
+    null
   );
 });
 

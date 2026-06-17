@@ -100,7 +100,7 @@ export function filterExcerptGroups(groups, query) {
     .filter((group) => group.excerpts.length > 0);
 }
 
-export function getClipLibraryEmptyState({ hasSavedClips, hasSearchQuery }) {
+export function getClipLibraryEmptyState({ hasSavedClips, hasSearchQuery, hasMatchingClips = true }) {
   if (!hasSavedClips) {
     return {
       title: 'No clips saved yet',
@@ -108,7 +108,7 @@ export function getClipLibraryEmptyState({ hasSavedClips, hasSearchQuery }) {
     };
   }
 
-  if (hasSearchQuery) {
+  if (hasSearchQuery && !hasMatchingClips) {
     return {
       title: 'No matching clips',
       message: 'Try a different search term.'

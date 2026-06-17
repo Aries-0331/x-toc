@@ -191,7 +191,8 @@ function renderExcerptManager() {
   const hasSearchQuery = excerptSearchQuery.trim().length > 0;
   const emptyState = getClipLibraryEmptyState({
     hasSavedClips: hasSavedExcerpts,
-    hasSearchQuery
+    hasSearchQuery,
+    hasMatchingClips: hasExcerpts
   });
   const totalExcerpts = groups.reduce((count, group) => count + group.excerpts.length, 0);
   const selectedCount = getSelectedExcerptCount();
