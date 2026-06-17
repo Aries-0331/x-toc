@@ -317,7 +317,7 @@ async function saveTagInput(input) {
   if (!excerpt) return;
 
   if (!tag.trim()) {
-    input.closest('[data-role="tag-editor"]')?.classList.add('hidden');
+    closeTagInput(input);
     return;
   }
 
@@ -325,6 +325,15 @@ async function saveTagInput(input) {
   excerptState.excerpts[excerptId] = updateClipNote(withTag, note);
   await saveExcerptState();
   renderExcerptManager();
+}
+
+function closeTagInput(input) {
+  const editor = input.closest('[data-role="tag-editor"]');
+  const addButton = editor?.parentElement?.querySelector('[data-action="show-tag-input"]');
+
+  input.value = '';
+  editor?.classList.add('hidden');
+  addButton?.classList.remove('hidden');
 }
 
 function currentDateSlug() {
@@ -396,8 +405,12 @@ function bindExcerptManagerEvents() {
       const item = actionTarget.closest('.excerpt-item');
       const editor = item?.querySelector('[data-role="tag-editor"]');
       const input = editor?.querySelector('[data-role="tag-input"]');
+      actionTarget.classList.add('hidden');
       editor?.classList.remove('hidden');
-      input?.focus();
+      if (input) {
+        input.value = '';
+        input.focus();
+      }
     } else if (action === 'open-editor') {
       editingExcerptIds.add(actionTarget.dataset.excerptId);
       renderExcerptManager();
@@ -411,6 +424,15 @@ function bindExcerptManagerEvents() {
 
     event.preventDefault();
     await saveTagInput(event.target);
+  });
+
+  manager.addEventListener('focusout', (event) => {
+    if (event.target.dataset.role !== 'tag-input') return;
+
+    setTimeout(async () => {
+      if (!document.body.contains(event.target)) return;
+      await saveTagInput(event.target);
+    }, 0);
   });
 }
 
