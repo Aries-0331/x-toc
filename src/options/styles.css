@@ -295,6 +295,7 @@ body {
 .tag-list {
   display: flex;
   flex-wrap: wrap;
+  align-items: center;
   gap: 6px;
 }
 
@@ -327,10 +328,13 @@ body {
 }
 
 .tag-editor {
+  display: inline-flex;
+  align-items: center;
   max-width: 360px;
 }
 
 .tag-editor input {
+  height: 28px;
   min-width: 0;
   flex: 1;
   border: 1px solid var(--border-color);
@@ -339,8 +343,9 @@ body {
   color: var(--text-primary);
   font: inherit;
   font-size: 12px;
+  line-height: 1;
   outline: none;
-  padding: 7px 9px;
+  padding: 0 9px;
 }
 
 .tag-editor input:focus {
