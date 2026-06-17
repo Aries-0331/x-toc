@@ -360,7 +360,7 @@ body {
 
 .editor-section {
   display: grid;
-  grid-template-columns: 54px minmax(0, 1fr);
+  grid-template-columns: 40px minmax(0, 1fr);
   align-items: start;
   column-gap: 10px;
 }

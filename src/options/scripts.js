@@ -135,9 +135,9 @@ function renderClipEditor(excerpt) {
       <div class="editor-section editor-tags-section" aria-label="Clip tags">
         <div class="editor-section-header">
           <span class="editor-label">Tags</span>
-          <button class="editor-add-btn" type="button" data-action="show-tag-input" data-excerpt-id="${escapeHtml(excerpt.id)}" aria-label="Add tag">+</button>
         </div>
         <div class="editor-section-content">
+          <button class="editor-add-btn" type="button" data-action="show-tag-input" data-excerpt-id="${escapeHtml(excerpt.id)}" aria-label="Add tag">+</button>
           ${renderTagChips(excerpt, { editable: true })}
           <div class="tag-editor hidden" data-role="tag-editor">
             <input type="text" data-role="tag-input" aria-label="Add tag" placeholder="Add tag">
